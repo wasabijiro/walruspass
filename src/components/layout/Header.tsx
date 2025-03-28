@@ -1,10 +1,10 @@
 "use client"
 
-import { GoogleLoginButton } from "@/components/auth/LoginButton"
 import { LogoutButton } from "@/components/auth/LogoutButton"
 import { useAuth } from "@/hooks/useAuth"
 import { Button } from "@/components/ui/button"
 import { useRouter } from "next/navigation"
+import { SuiWalletLoginButton } from "@/components/auth/SuiWalletLoginButton"
 
 export function Header() {
   const { isAuthenticated, loading } = useAuth()
@@ -33,13 +33,7 @@ export function Header() {
             isAuthenticated ? (
               <LogoutButton />
             ) : (
-              <Button
-                variant="outline"
-                onClick={() => router.push('/login')}
-                className="text-gray-600 hover:text-gray-800 transition-colors"
-              >
-                ログイン
-              </Button>
+              <SuiWalletLoginButton />
             )
           )}
         </div>
