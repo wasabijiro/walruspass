@@ -1,0 +1,3990 @@
+{
+  "components": {
+    "schemas": {
+      "ApiKeysParams": {
+        "properties": {
+          "key": {
+            "minLength": 1,
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "type": "object",
+        "required": [
+          "key"
+        ]
+      },
+      "CreateChallengeRequestPayload": {
+        "properties": {
+          "address": {
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "type": "object",
+        "required": [
+          "address"
+        ]
+      },
+      "CreateChallengeResponse": {
+        "properties": {
+          "nonce": {
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "type": "object",
+        "required": [
+          "nonce"
+        ]
+      },
+      "VerifyChallengeRequestPayload": {
+        "properties": {
+          "address": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "signature": {
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "type": "object",
+        "required": [
+          "address",
+          "signature"
+        ]
+      },
+      "VerifyChallengeResponse": {
+        "properties": {
+          "idToken": {
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "type": "object",
+        "required": [
+          "idToken"
+        ]
+      },
+      "GenerateJWTRequestPayload": {
+        "properties": {
+          "grantType": {
+            "type": "string"
+          },
+          "authProvider": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
+          },
+          "refreshToken": {
+            "type": "string"
+          },
+          "redirectUri": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "GenerateJWTResponse": {
+        "properties": {
+          "accessToken": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "idToken": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "refreshToken": {
+            "type": "string"
+          }
+        },
+        "type": "object",
+        "required": [
+          "accessToken",
+          "idToken"
+        ]
+      },
+      "ListQuery": {
+        "properties": {
+          "limit": {
+            "maximum": 1000,
+            "type": "number",
+            "minimum": 1
+          },
+          "nextToken": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "GetParams": {
+        "properties": {
+          "id": {
+            "minLength": 1,
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id"
+        ]
+      },
+      "PatchBody": {
+        "properties": {
+          "name": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "CollectionsListQuery": {
+        "properties": {
+          "vaultId": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "parentId": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "active",
+              "revoked",
+              "deleted"
+            ],
+            "type": "string"
+          },
+          "limit": {
+            "maximum": 1000,
+            "type": "number",
+            "minimum": 1
+          },
+          "nextToken": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "CollectionBody": {
+        "properties": {
+          "recipient": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "description": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "folderId": {
+            "minLength": 1,
+            "type": "string",
+            "format": "uuid"
+          },
+          "projectUrl": {
+            "format": "url",
+            "type": "string"
+          },
+          "link": {
+            "format": "url",
+            "type": "string"
+          },
+          "thumbnailUrl": {
+            "format": "url",
+            "type": "string"
+          },
+          "creator": {
+            "type": "string"
+          }
+        },
+        "type": "object",
+        "required": [
+          "recipient",
+          "description",
+          "folderId"
+        ]
+      },
+      "FilesListQuery": {
+        "properties": {
+          "vaultId": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "parentId": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "uploadId": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "active",
+              "revoked",
+              "deleted"
+            ],
+            "type": "string"
+          },
+          "limit": {
+            "maximum": 1000,
+            "type": "number",
+            "minimum": 1
+          },
+          "nextToken": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "FilesPatchBody": {
+        "properties": {
+          "parentId": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "active",
+              "revoked",
+              "deleted"
+            ],
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "FoldersListQuery": {
+        "properties": {
+          "vaultId": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "parentId": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "active",
+              "revoked",
+              "deleted"
+            ],
+            "type": "string"
+          },
+          "limit": {
+            "maximum": 1000,
+            "type": "number",
+            "minimum": 1
+          },
+          "nextToken": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "CreateFolderBody": {
+        "properties": {
+          "name": {
+            "minLength": 1,
+            "type": "string",
+            "maxLength": 1024
+          },
+          "vaultId": {
+            "minLength": 1,
+            "type": "string",
+            "format": "uuid"
+          },
+          "parentId": {
+            "format": "uuid",
+            "type": "string"
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "vaultId"
+        ]
+      },
+      "CreateFolderTreeBody": {
+        "properties": {
+          "paths": {
+            "items": {
+              "$ref": "#/components/schemas/Array"
+            },
+            "type": "array",
+            "minLength": 1
+          },
+          "vaultId": {
+            "minLength": 1,
+            "type": "string",
+            "format": "uuid"
+          },
+          "parentId": {
+            "format": "uuid",
+            "type": "string"
+          }
+        },
+        "type": "object",
+        "required": [
+          "paths",
+          "vaultId"
+        ]
+      },
+      "FolderPath": {
+        "properties": {
+          "name": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "relativePath": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "parentPath": {
+            "type": "string"
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "relativePath"
+        ]
+      },
+      "PatchFolderBody": {
+        "properties": {
+          "name": {
+            "maxLength": 1024,
+            "type": "string",
+            "minLength": 1
+          },
+          "parentId": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "active",
+              "revoked",
+              "deleted"
+            ],
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "UpdateMeBody": {
+        "properties": {
+          "name": {
+            "minLength": 3,
+            "maxLength": 255,
+            "type": "string"
+          },
+          "picture": {
+            "format": "url",
+            "type": "string"
+          },
+          "encPrivateKey": {
+            "minLength": 1,
+            "maxLength": 4096,
+            "type": "string"
+          },
+          "encPrivateKeyBackup": {
+            "minLength": 1,
+            "maxLength": 4096,
+            "type": "string"
+          },
+          "publicKey": {
+            "minLength": 1,
+            "maxLength": 4096,
+            "type": "string"
+          },
+          "termsAccepted": {
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "EncryptionKeysBody": {
+        "properties": {
+          "encPrivateKey": {
+            "minLength": 1,
+            "maxLength": 4096,
+            "type": "string"
+          },
+          "encPrivateKeyBackup": {
+            "minLength": 1,
+            "maxLength": 4096,
+            "type": "string"
+          },
+          "publicKey": {
+            "minLength": 1,
+            "maxLength": 4096,
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "CreateSponsoredTransactionBody": {
+        "properties": {
+          "bytes": {
+            "minLength": 1,
+            "maxLength": 4096,
+            "type": "string"
+          },
+          "recipient": {
+            "minLength": 1,
+            "maxLength": 255,
+            "type": "string"
+          }
+        },
+        "type": "object",
+        "required": [
+          "bytes",
+          "recipient"
+        ]
+      },
+      "ExecuteSponsoredTransactionBody": {
+        "properties": {
+          "signature": {
+            "minLength": 1,
+            "maxLength": 4096,
+            "type": "string"
+          },
+          "digest": {
+            "minLength": 1,
+            "maxLength": 4096,
+            "type": "string"
+          }
+        },
+        "type": "object",
+        "required": [
+          "signature",
+          "digest"
+        ]
+      },
+      "VaultsListQuery": {
+        "properties": {
+          "status": {
+            "enum": [
+              "active",
+              "archived",
+              "deleted"
+            ],
+            "type": "string"
+          },
+          "limit": {
+            "maximum": 1000,
+            "type": "number",
+            "minimum": 1
+          },
+          "nextToken": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "CreateVaultRequestPayload": {
+        "properties": {
+          "name": {
+            "maxLength": 1024,
+            "type": "string",
+            "minLength": 1
+          },
+          "description": {
+            "maxLength": 4096,
+            "type": "string"
+          },
+          "tags": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "encrypted": {
+            "type": "boolean"
+          },
+          "keys": {
+            "items": {
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "whitelist": {
+            "items": {
+              "type": "object"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object",
+        "required": [
+          "name"
+        ]
+      },
+      "VaultsGetQuery": {
+        "properties": {
+          "withMemberships": {
+            "type": "boolean"
+          },
+          "withFiles": {
+            "type": "boolean"
+          },
+          "withFolders": {
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "PatchVaultBody": {
+        "properties": {
+          "name": {
+            "maxLength": 1024,
+            "type": "string",
+            "minLength": 1
+          },
+          "description": {
+            "maxLength": 4096,
+            "type": "string"
+          },
+          "tags": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "VaultsPatchBody": {
+        "properties": {
+          "description": {
+            "maxLength": 4096,
+            "type": "string"
+          },
+          "tags": {
+            "items": {
+              "maxLength": 64,
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "AddMemberBody": {
+        "properties": {
+          "name": {
+            "maxLength": 1024,
+            "type": "string"
+          },
+          "expiresAt": {
+            "type": "number"
+          },
+          "allowedStorage": {
+            "type": "number"
+          },
+          "allowedPaths": {
+            "type": "object"
+          },
+          "role": {
+            "enum": [
+              "owner",
+              "contributor",
+              "viewer"
+            ],
+            "type": "string"
+          },
+          "address": {
+            "type": "string"
+          },
+          "keys": {
+            "items": {
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "encPrivateKey": {
+            "minLength": 1,
+            "maxLength": 4096,
+            "type": "string"
+          },
+          "ownerAccess": {
+            "maxLength": 4096,
+            "type": "string"
+          },
+          "publicKey": {
+            "minLength": 1,
+            "maxLength": 4096,
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "GetMemberParams": {
+        "properties": {
+          "memberId": {
+            "format": "uuid",
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "type": "object",
+        "required": [
+          "memberId"
+        ]
+      },
+      "UpdateMemberBody": {
+        "properties": {
+          "role": {
+            "enum": [
+              "owner",
+              "contributor",
+              "viewer"
+            ],
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "accepted",
+              "pending",
+              "rejected",
+              "revoked"
+            ],
+            "type": "string"
+          },
+          "keys": {
+            "items": {
+              "type": "object"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "DeleteMemberBody": {
+        "properties": {
+          "keys": {}
+        },
+        "type": "object"
+      },
+      "CreateUrlAliasBody": {
+        "properties": {
+          "url": {
+            "pattern": "^https:\\/\\/.*app\\.tusky\\.io\\/.+$",
+            "type": "string",
+            "format": "url"
+          },
+          "expiresAt": {
+            "type": "string"
+          }
+        },
+        "type": "object",
+        "required": [
+          "url"
+        ]
+      },
+      "GetUrlAliasRequestParams": {
+        "properties": {
+          "alias": {
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "type": "object",
+        "required": [
+          "alias"
+        ]
+      },
+      "CreateCheckoutSessionRequestPayload": {
+        "properties": {
+          "priceLookupKey": {
+            "minLength": 1,
+            "type": "string",
+            "enum": [
+              "monthly",
+              "yearly"
+            ]
+          },
+          "quantity": {
+            "type": "number",
+            "maximum": 5000,
+            "minimum": 50
+          },
+          "redirectUrl": {
+            "format": "url",
+            "type": "string"
+          },
+          "cancelUrl": {
+            "format": "url",
+            "type": "string"
+          }
+        },
+        "type": "object",
+        "required": [
+          "priceLookupKey"
+        ]
+      },
+      "NftsListQuery": {
+        "properties": {
+          "vaultId": {
+            "type": "string"
+          },
+          "parentId": {
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "active",
+              "revoked",
+              "deleted"
+            ],
+            "type": "string"
+          },
+          "limit": {
+            "maximum": 1000,
+            "type": "number",
+            "minimum": 1
+          },
+          "nextToken": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "CreateNftBody": {
+        "properties": {
+          "recipient": {
+            "type": "string",
+            "minLength": 1
+          },
+          "name": {
+            "minLength": 1,
+            "maxLength": 100,
+            "type": "string"
+          },
+          "description": {
+            "minLength": 1,
+            "maxLength": 4096,
+            "type": "string"
+          },
+          "fileId": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "projectUrl": {
+            "format": "url",
+            "type": "string"
+          },
+          "link": {
+            "format": "url",
+            "type": "string"
+          },
+          "thumbnailUrl": {
+            "format": "url",
+            "type": "string"
+          },
+          "creator": {
+            "minLength": 1,
+            "maxLength": 100,
+            "type": "string"
+          }
+        },
+        "type": "object",
+        "required": [
+          "recipient",
+          "description"
+        ]
+      },
+      "CreatePaymentSessionPayload": {
+        "properties": {
+          "coin": {
+            "minLength": 1,
+            "type": "string",
+            "enum": [
+              "sui",
+              "solana"
+            ]
+          },
+          "quantity": {
+            "minLength": 1,
+            "type": "number",
+            "maximum": 5000,
+            "minimum": 50
+          },
+          "invoiceName": {
+            "minLength": 1,
+            "maxLength": 50,
+            "type": "string"
+          },
+          "invoiceEmail": {
+            "format": "email",
+            "type": "string"
+          },
+          "invoiceCountryCode": {
+            "maxLength": 3,
+            "type": "string"
+          },
+          "invoiceZipCode": {
+            "maxLength": 10,
+            "type": "string"
+          },
+          "invoiceCity": {
+            "maxLength": 50,
+            "type": "string"
+          },
+          "invoiceState": {
+            "maxLength": 50,
+            "type": "string"
+          },
+          "invoiceStreet": {
+            "maxLength": 50,
+            "type": "string"
+          },
+          "promoCode": {
+            "maxLength": 50,
+            "type": "string"
+          }
+        },
+        "type": "object",
+        "required": [
+          "coin",
+          "quantity"
+        ]
+      },
+      "PaymentSessionParams": {
+        "properties": {
+          "sessionId": {
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "type": "object",
+        "required": [
+          "sessionId"
+        ]
+      },
+      "PatchPaymentSessionPayload": {
+        "properties": {
+          "invoiceName": {
+            "minLength": 2,
+            "maxLength": 50,
+            "type": "string"
+          },
+          "invoiceEmail": {
+            "format": "email",
+            "type": "string"
+          },
+          "invoiceCountryCode": {
+            "minLength": 2,
+            "maxLength": 3,
+            "type": "string"
+          },
+          "invoiceZipCode": {
+            "minLength": 2,
+            "maxLength": 10,
+            "type": "string"
+          },
+          "invoiceCity": {
+            "maxLength": 50,
+            "type": "string"
+          },
+          "invoiceState": {
+            "maxLength": 50,
+            "type": "string"
+          },
+          "invoiceStreet": {
+            "maxLength": 50,
+            "type": "string"
+          },
+          "promoCode": {
+            "minLength": 1,
+            "maxLength": 50,
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "ConfirmPaymentSessionPayload": {
+        "properties": {
+          "senderWalletAddress": {
+            "minLength": 1,
+            "maxLength": 70,
+            "type": "string"
+          },
+          "signature": {
+            "minLength": 1,
+            "maxLength": 2048,
+            "type": "string"
+          }
+        },
+        "type": "object",
+        "required": [
+          "senderWalletAddress",
+          "signature"
+        ]
+      },
+      "VerifyPaymentSessionPayload": {
+        "properties": {
+          "txId": {
+            "minLength": 40,
+            "maxLength": 45,
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "SubscriptionPriceQuery": {
+        "properties": {
+          "priceLookupKey": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "quantity": {
+            "minLength": 1,
+            "type": "number"
+          },
+          "countryCode": {
+            "minLength": 2,
+            "maxLength": 3,
+            "type": "string"
+          },
+          "promoCode": {
+            "minLength": 3,
+            "maxLength": 30,
+            "type": "string"
+          }
+        },
+        "type": "object",
+        "required": [
+          "priceLookupKey",
+          "quantity"
+        ]
+      },
+      "OnUploadCreateMetadata": {
+        "properties": {
+          "id": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "name": {
+            "minLength": 1,
+            "maxLength": 2048,
+            "type": "string"
+          },
+          "parentId": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "vaultId": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "mimeType": {
+            "minLength": 1,
+            "maxLength": 255,
+            "type": "string"
+          },
+          "uploadId": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "network": {
+            "type": "string"
+          },
+          "chunkSize": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 52428800
+          },
+          "numberOfChunks": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 10000
+          },
+          "encryptedAesKey": {
+            "minLength": 1,
+            "maxLength": 4096,
+            "type": "string"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "parentId",
+          "vaultId",
+          "mimeType",
+          "uploadId",
+          "network"
+        ]
+      },
+      "OnUploadFinishedMetadata": {
+        "properties": {
+          "size": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 1000000000000
+          },
+          "id": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "name": {
+            "minLength": 1,
+            "maxLength": 2048,
+            "type": "string"
+          },
+          "parentId": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "vaultId": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "mimeType": {
+            "minLength": 1,
+            "maxLength": 255,
+            "type": "string"
+          },
+          "uploadId": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "network": {
+            "type": "string"
+          },
+          "chunkSize": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 52428800
+          },
+          "numberOfChunks": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 10000
+          },
+          "encryptedAesKey": {
+            "minLength": 1,
+            "maxLength": 4096,
+            "type": "string"
+          }
+        },
+        "type": "object",
+        "required": [
+          "size",
+          "id",
+          "name",
+          "parentId",
+          "vaultId",
+          "mimeType",
+          "uploadId",
+          "network"
+        ]
+      }
+    },
+    "securitySchemes": {
+      "apiKey": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "Api-Key"
+      }
+    }
+  },
+  "info": {
+    "title": "Tusky API",
+    "version": "1.31.1",
+    "description": "Decentralized file system build on Walrus (SUI blockchain).\n\n<br><br>\n\n---\n\n## Authorization\n\nTusky authenticates your API requests using your account’s API keys. If a request doesn’t include a valid key or it includes a deleted or expired key, Tusky returns an HTTP 401 status.\n\nUse the Tusky App to create or delete your API keys. To access your API keys, select the API Keys tab in your Account.\n\n<br><br>\n\n---\n\n## Pagination\n\nSome top-level API resources have support for bulk fetches through HTTP GET API requests. For example, you can list file system entities: vaults, folders, files. These list API methods share a common structure and accept, the following parameters: `limit`, `nextToken`. Response structure is same for those paginated methods, containing two top-level attributes: `items`, `nextToken`.\n\nBoth parameters are optional. Omitted `limit` defaults to 100. Omitted `nextToken` defaults to first “page” with default API method’s sort considered.\n\nTusky’s paginated API methods use cursor-based pagination through the `nextToken` parameter. This means you can only go to the next “page” of items, not to the previous.\n\nFor example fetching files in folder would go like: `GET /files?parentId=xyz`\n\nSuch HTTP call is requesting first 100 (default limit) files which are contained in folder with identifier equal to `xyz`. Response to such request will contain JSON body with:\n\n- `items`: list of sorted (by default sort key = `updatedAt`) file entries, possibly empty if no files found in given folder.\n\n- `nextToken`: next page cursor, possibly empty if there are less than 100 files in `xyz` folder.\n\n<br><br>\n\n---\n\n## Error codes\n\nTusky uses conventional HTTP response codes to indicate the success or failure of an API request. In general:\n\n- codes in the `2xx` range indicate success.\n\n- codes in the `4xx` range indicate client side error - missing or invalid parameter (e.g. trying to delete vault that is not empty; trying to permanently delete folder that is not in trash).\n\n- codes in the `5xx` range indicate an error with Tusky’s servers - these are rare, retryable and can be reported to Tusky’s support.\n\n<br><br>\n\n---\n\n## Request IDs\n\nEach API request has an associated request identifier. You can find this value in the response headers, under Request-Id.\n\nIn case of any issues encountered, to speed up the resolution process, provide the request identifier when you contact us about a specific request.\n\n<br><br>\n\n---\n\n## TLDR\n\nHere is how you can upload files to Tusky:\n\nFirst, setup your account at https://app.tusky.io & generate API key\n\nThen create vault:\n\n```javascript\nconst response = await fetch('https://api.tusky.io/vaults', {\n  method: 'POST',\n  headers: {\n    'Api-Key': 'YOUR_API_KEY',\n  },\n  body: {\n    name: 'Vaulty vault',\n  },\n});\n\nconst vault = await response.json();\n```\n\nReady to upload files!\n\nTusky implements [tus.io](https://tus.io) - a magnificent HTTP protocol for resumable file uploads.\nThere are many SDKs out there, both officially supported by tus.io and from community. We recommend using one of those.\n\n```bash\nnpm i tus-js-client\n```\n\n```javascript\nconst fileStats = fs.statSync('YOUR_FILE_PATH');\nconst fileSize = fileStats.size;\nconst fileName = filePath.split('/').pop();\nconst fileStream = fs.createReadStream(filePath);\n\nconst upload = new tus.Upload(fileStream, {\n  endpoint: endpoint,\n  headers: {\n    'Api-Key': 'YOUR_API_KEY',\n  },\n  metadata: {\n    filename: fileName,\n    filetype: 'text/plain', // Adjust according to your file type\n    vaultId: vault.id,\n  },\n  onError: error => {\n    console.error('Upload failed:', error.message);\n  },\n  onProgress: (bytesUploaded, bytesTotal) => {\n    const percentage = ((bytesUploaded / bytesTotal) * 100).toFixed(2);\n    console.log(`Progress: ${percentage}% (${bytesUploaded}/${bytesTotal} bytes)`);\n  },\n  onSuccess: () => {\n    console.log('Upload completed successfully!');\n  },\n});\n\nupload.start();\n```\n"
+  },
+  "openapi": "3.0.0",
+  "paths": {
+    "/api-keys": {
+      "get": {
+        "operationId": "ApiKeysController.getApiKeys",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ApiKeysResponse"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": "List of API keys"
+          }
+        },
+        "summary": "List API keys",
+        "tags": [
+          "Authentication"
+        ],
+        "description": "Returns a list of API keys associated with the authenticated user",
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      },
+      "post": {
+        "operationId": "ApiKeysController.createApiKey",
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiKeysResponse"
+                }
+              }
+            },
+            "description": "Created API key"
+          }
+        },
+        "summary": "Create new API key",
+        "tags": [
+          "Authentication"
+        ],
+        "description": "Generates a new API key for the authenticated user",
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      }
+    },
+    "/api-keys/{key}": {
+      "delete": {
+        "operationId": "ApiKeysController.deleteApiKey",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "pattern": "[^\\/#\\?]+?",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiKeysResponse"
+                }
+              }
+            },
+            "description": "Revoked API key"
+          },
+          "400": {
+            "description": "Api key already revoked"
+          },
+          "404": {
+            "description": "Api key not found"
+          }
+        },
+        "summary": "Revoke API key",
+        "tags": [
+          "Authentication"
+        ],
+        "description": "Revokes the specified API key. The key will no longer be valid for authentication.",
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      }
+    },
+    "/auth/create-challenge": {
+      "post": {
+        "operationId": "AuthController.createChallenge",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateChallengeRequestPayload"
+              }
+            }
+          },
+          "description": "CreateChallengeRequestPayload",
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateChallengeResponse"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "summary": "Create authentication challenge",
+        "tags": [
+          "Authentication"
+        ],
+        "description": "Creates a challenge nonce for the given wallet address to be signed"
+      }
+    },
+    "/auth/verify-challenge": {
+      "post": {
+        "operationId": "AuthController.verifyChallenge",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VerifyChallengeRequestPayload"
+              }
+            }
+          },
+          "description": "VerifyChallengeRequestPayload",
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VerifyChallengeResponse"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "summary": "Verify authentication challenge",
+        "tags": [
+          "Authentication"
+        ],
+        "description": "Verifies the signed challenge and returns a JWT token"
+      }
+    },
+    "/auth/token": {
+      "post": {
+        "operationId": "AuthController.generateJWT",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GenerateJWTRequestPayload"
+              }
+            }
+          },
+          "description": "GenerateJWTRequestPayload",
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenerateJWTResponse"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "summary": "Generate JWT token",
+        "tags": [
+          "Authentication"
+        ],
+        "description": "Generates JWT tokens using OAuth2 authorization code or refresh token flows"
+      }
+    },
+    "": {
+      "get": {
+        "operationId": "AbstractController.list",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "maximum": 1000,
+              "type": "number",
+              "minimum": 1
+            }
+          },
+          {
+            "in": "query",
+            "name": "nextToken",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "text/html; charset=utf-8": {}
+            },
+            "description": "Successful response"
+          }
+        },
+        "summary": "List",
+        "tags": [
+          "Abstract"
+        ]
+      },
+      "post": {
+        "operationId": "AbstractController.create",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {}
+            }
+          },
+          "description": "",
+          "required": false
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "text/html; charset=utf-8": {}
+            },
+            "description": "Successful response"
+          }
+        },
+        "summary": "Create",
+        "tags": [
+          "Abstract"
+        ]
+      }
+    },
+    "/{id}": {
+      "get": {
+        "operationId": "AbstractController.get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "pattern": "[^\\/#\\?]+?",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "text/html; charset=utf-8": {}
+            },
+            "description": "Successful response"
+          }
+        },
+        "summary": "Get",
+        "tags": [
+          "Abstract"
+        ]
+      },
+      "patch": {
+        "operationId": "AbstractController.patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "pattern": "[^\\/#\\?]+?",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PatchBody"
+              }
+            }
+          },
+          "description": "PatchBody",
+          "required": false
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "text/html; charset=utf-8": {}
+            },
+            "description": "Successful response"
+          }
+        },
+        "summary": "Patch",
+        "tags": [
+          "Abstract"
+        ]
+      },
+      "delete": {
+        "operationId": "AbstractController.delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "pattern": "[^\\/#\\?]+?",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "text/html; charset=utf-8": {}
+            },
+            "description": "Successful response"
+          }
+        },
+        "summary": "Delete",
+        "tags": [
+          "Abstract"
+        ]
+      }
+    },
+    "/collections": {
+      "get": {
+        "operationId": "CollectionsController.list",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "maximum": 1000,
+              "type": "number",
+              "minimum": 1
+            }
+          },
+          {
+            "in": "query",
+            "name": "nextToken",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/CollectionResponse"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": "List of collections"
+          }
+        },
+        "summary": "List Collections",
+        "tags": [
+          "Collections"
+        ],
+        "description": "Returns a list of collections owned by the authenticated user",
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      },
+      "post": {
+        "operationId": "CollectionsController.create",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CollectionBody"
+              }
+            }
+          },
+          "description": "CollectionBody",
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CollectionResponse"
+                }
+              }
+            },
+            "description": "Collection"
+          }
+        },
+        "summary": "Create Collection",
+        "tags": [
+          "Collections"
+        ],
+        "description": "Creates a new collection",
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      }
+    },
+    "/collections/{id}": {
+      "get": {
+        "operationId": "CollectionsController.get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "pattern": "[^\\/#\\?]+?",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CollectionResponse"
+                }
+              }
+            },
+            "description": "Collection"
+          }
+        },
+        "summary": "Get Collection",
+        "tags": [
+          "Collections"
+        ],
+        "description": "Returns a single collection by its ID",
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      }
+    },
+    "/api-docs": {
+      "get": {
+        "operationId": "ApiDocsController.getApiDocs",
+        "responses": {
+          "200": {
+            "content": {
+              "text/html; charset=utf-8": {}
+            },
+            "description": "Successful response"
+          }
+        },
+        "summary": "Get api docs",
+        "tags": [
+          "Api Docs"
+        ]
+      }
+    },
+    "/api-docs/ui": {
+      "get": {
+        "operationId": "ApiDocsController.getDocs",
+        "responses": {
+          "200": {
+            "content": {
+              "text/html": {}
+            },
+            "description": "Successful response"
+          }
+        },
+        "summary": "Get docs",
+        "tags": [
+          "Api Docs"
+        ]
+      }
+    },
+    "/files": {
+      "get": {
+        "operationId": "FilesController.list",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "vaultId",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "parentId",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "uploadId",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "status",
+            "schema": {
+              "enum": [
+                "active",
+                "revoked",
+                "deleted"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "maximum": 1000,
+              "type": "number",
+              "minimum": 1
+            }
+          },
+          {
+            "in": "query",
+            "name": "nextToken",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/FilesResponse"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": "List of files"
+          }
+        },
+        "summary": "Lists files",
+        "tags": [
+          "Files"
+        ],
+        "security": [
+          {
+            "api_key": []
+          }
+        ],
+        "description": "This operation returns a maximum of 1000 file entries and defaults to 100 if `limit` is not provided. Use the `limit` and `nextToken` parameters to paginate. You can query by container using the `parentId` or `vaultId` parameters."
+      },
+      "post": {
+        "operationId": "FilesController.create",
+        "responses": {
+          "200": {
+            "content": {
+              "text/html; charset=utf-8": {}
+            },
+            "description": "Successful response"
+          }
+        },
+        "summary": "Create",
+        "tags": [
+          "Files"
+        ],
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      }
+    },
+    "/files/{id}": {
+      "get": {
+        "operationId": "FilesController.get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "pattern": "[^\\/#\\?]+?",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {}
+            },
+            "description": "Successful response"
+          }
+        },
+        "summary": "Gets file by ID.",
+        "tags": [
+          "Files"
+        ],
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      },
+      "patch": {
+        "operationId": "FilesController.patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "pattern": "[^\\/#\\?]+?",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FilesPatchBody"
+              }
+            }
+          },
+          "description": "FilesPatchBody",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FilesResponse"
+                }
+              }
+            },
+            "description": "File"
+          }
+        },
+        "summary": "File status update.",
+        "tags": [
+          "Files"
+        ],
+        "security": [
+          {
+            "api_key": []
+          }
+        ],
+        "description": "Rename or move a file (also to trash `status=deleted`)."
+      },
+      "delete": {
+        "operationId": "FilesController.delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "pattern": "[^\\/#\\?]+?",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "content": {
+              "application/json": {}
+            },
+            "description": "Successful response"
+          }
+        },
+        "summary": "Permanently deletes a file.",
+        "tags": [
+          "Files"
+        ],
+        "security": [
+          {
+            "api_key": []
+          }
+        ],
+        "description": "This operation permanently deletes the specified file from Tusky and frees up the storage. Deletion from Walrus is scheduled. Operation cannot be undone, so use with caution."
+      }
+    },
+    "/files/{id}/data": {
+      "get": {
+        "operationId": "FilesController.getData",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "range",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "pattern": "[^\\/#\\?]+?",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "text/html; charset=utf-8": {}
+            },
+            "description": "File data",
+            "type": "binary"
+          },
+          "206": {
+            "description": "Partial file data",
+            "type": "binary"
+          }
+        },
+        "summary": "Gets file binary stream.",
+        "tags": [
+          "Files"
+        ],
+        "security": [
+          {
+            "api_key": []
+          }
+        ],
+        "description": "The binary stream of the file."
+      }
+    },
+    "/health": {
+      "get": {
+        "operationId": "HealthController.getHealth",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {}
+            },
+            "description": "Successful response"
+          }
+        },
+        "summary": "Get health",
+        "tags": [
+          "Health"
+        ]
+      }
+    },
+    "/folders": {
+      "get": {
+        "operationId": "FoldersController.list",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "vaultId",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "parentId",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "status",
+            "schema": {
+              "enum": [
+                "active",
+                "revoked",
+                "deleted"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "maximum": 1000,
+              "type": "number",
+              "minimum": 1
+            }
+          },
+          {
+            "in": "query",
+            "name": "nextToken",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FoldersResponse"
+                }
+              }
+            },
+            "description": "Folder"
+          }
+        },
+        "summary": "Retrieve folders with pagination and filtering.",
+        "tags": [
+          "Folders"
+        ],
+        "security": [
+          {
+            "api_key": []
+          }
+        ],
+        "description": "This operation returns a maximum of 1000 file entries and defaults to 100 if `limit` is not provided. Use the `limit` and `nextToken` parameters to paginate. You can query by container using the `parentId` or `vaultId` parameters"
+      },
+      "post": {
+        "operationId": "FoldersController.create",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateFolderBody"
+              }
+            }
+          },
+          "description": "CreateFolderBody",
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FoldersResponse"
+                }
+              }
+            },
+            "description": "Folder"
+          }
+        },
+        "summary": "Creates a new folder.",
+        "tags": [
+          "Folders"
+        ],
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      }
+    },
+    "/folders/{id}": {
+      "get": {
+        "operationId": "FoldersController.get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "pattern": "[^\\/#\\?]+?",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FoldersResponse"
+                }
+              }
+            },
+            "description": "Folder"
+          }
+        },
+        "summary": "Gets folder by ID.",
+        "tags": [
+          "Folders"
+        ],
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      },
+      "patch": {
+        "operationId": "FoldersController.update",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "pattern": "[^\\/#\\?]+?",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PatchFolderBody"
+              }
+            }
+          },
+          "description": "PatchFolderBody",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FoldersResponse"
+                }
+              }
+            },
+            "description": "Folder"
+          }
+        },
+        "summary": "Folder status update.",
+        "tags": [
+          "Folders"
+        ],
+        "security": [
+          {
+            "api_key": []
+          }
+        ],
+        "description": "Rename or move a folder (also to trash `status=deleted`)."
+      },
+      "delete": {
+        "operationId": "FoldersController.delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "pattern": "[^\\/#\\?]+?",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "content": {
+              "application/json": {}
+            },
+            "description": "Successful response"
+          }
+        },
+        "summary": "Permanently deletes a folder.",
+        "tags": [
+          "Folders"
+        ],
+        "security": [
+          {
+            "api_key": []
+          }
+        ],
+        "description": "This operation irreversibly removes the specified folder."
+      }
+    },
+    "/folders/tree": {
+      "post": {
+        "operationId": "FoldersController.createTree",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateFolderTreeBody"
+              }
+            }
+          },
+          "description": "CreateFolderTreeBody",
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {}
+            },
+            "description": "Successful response"
+          }
+        },
+        "summary": "Creates folder tree structure from provided paths.",
+        "tags": [
+          "Folders"
+        ],
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      }
+    },
+    "/me": {
+      "get": {
+        "operationId": "MeController.getMe",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponse"
+                }
+              }
+            },
+            "description": "Account data of the currently authenticated user"
+          }
+        },
+        "summary": "Retrieve user account data.",
+        "tags": [
+          "Accounts"
+        ],
+        "description": "This endpoint fetches the account data of the currently authenticated user.",
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      },
+      "patch": {
+        "operationId": "MeController.updateMe",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateMeBody"
+              }
+            }
+          },
+          "description": "UpdateMeBody",
+          "required": false
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponse"
+                }
+              }
+            },
+            "description": "Account data of the currently authenticated user"
+          },
+          "201": {
+            "description": "Account data updated successfully"
+          },
+          "400": {
+            "description": "Failed to update account data due to invalid payload"
+          }
+        },
+        "summary": "Modify user account data.",
+        "tags": [
+          "Accounts"
+        ],
+        "description": "This endpoint updates the account data of the currently authenticated user. It allows modification of user account information.",
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      },
+      "delete": {
+        "operationId": "MeController.deleteMe",
+        "responses": {
+          "204": {
+            "content": {
+              "application/json": {}
+            },
+            "description": "Account successfully deleted"
+          }
+        },
+        "summary": "Delete user account.",
+        "tags": [
+          "Me"
+        ],
+        "description": "This endpoint deletes the current user account and schedules content deletion.",
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      }
+    },
+    "/me/keys": {
+      "post": {
+        "operationId": "MeController.createEncryptionKeys",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EncryptionKeysBody"
+              }
+            }
+          },
+          "description": "EncryptionKeysBody",
+          "required": false
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponse"
+                }
+              }
+            },
+            "description": "Account data of the currently authenticated user"
+          },
+          "400": {
+            "description": "Failed to create encryption data due to invalid payload"
+          }
+        },
+        "summary": "Create user encryption keys backup.",
+        "tags": [
+          "Me"
+        ],
+        "description": "This endpoint creates user encryption keys backup.",
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      },
+      "patch": {
+        "operationId": "MeController.updateEncryptionKeys",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EncryptionKeysBody"
+              }
+            }
+          },
+          "description": "EncryptionKeysBody",
+          "required": false
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponse"
+                }
+              }
+            },
+            "description": "Account data of the currently authenticated user"
+          },
+          "400": {
+            "description": "Failed to update encryption data due to invalid payload"
+          }
+        },
+        "summary": "Update user encryption keys backup.",
+        "tags": [
+          "Me"
+        ],
+        "description": "This endpoint updates user encryption keys backup.",
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      },
+      "delete": {
+        "operationId": "MeController.resetEncryptionKeys",
+        "responses": {
+          "204": {
+            "content": {
+              "application/json": {}
+            },
+            "description": "User encryption keys backup & private content successfully deleted"
+          }
+        },
+        "summary": "Delete user encryption keys along with private content.",
+        "tags": [
+          "Me"
+        ],
+        "description": "This endpoint resets the current user encryption context and deletes all private data.",
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      }
+    },
+    "/me/txs": {
+      "post": {
+        "operationId": "MeController.createSponsoredTransaction",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateSponsoredTransactionBody"
+              }
+            }
+          },
+          "description": "CreateSponsoredTransactionBody",
+          "required": false
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateSponsoredTransactionResponse"
+                }
+              }
+            },
+            "description": "Transaction bytes to be signed by the user"
+          }
+        },
+        "summary": "Create sponsored transaction",
+        "tags": [
+          "Me"
+        ]
+      },
+      "patch": {
+        "operationId": "MeController.executeSponsoredTransaction",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExecuteSponsoredTransactionBody"
+              }
+            }
+          },
+          "description": "ExecuteSponsoredTransactionBody",
+          "required": false
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExecuteSponsoredTransactionResponse"
+                }
+              }
+            },
+            "description": "Sui Transaction response data"
+          }
+        },
+        "summary": "Execute sponsored transaction",
+        "tags": [
+          "Me"
+        ]
+      }
+    },
+    "/vaults": {
+      "post": {
+        "operationId": "VaultsController.create",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateVaultRequestPayload"
+              }
+            }
+          },
+          "description": "CreateVaultRequestPayload",
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {}
+            },
+            "description": "Vault created"
+          },
+          "400": {
+            "description": "Invalid payload"
+          }
+        },
+        "summary": "Creates a new vault.",
+        "tags": [
+          "Vaults"
+        ],
+        "security": [
+          {
+            "api_key": []
+          }
+        ],
+        "description": "New vault is not encrypted by default. Encrypted vaults are using end-to-end encryption with your own keys - those could be created over SDK."
+      },
+      "get": {
+        "operationId": "VaultsController.list",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "status",
+            "schema": {
+              "enum": [
+                "active",
+                "archived",
+                "deleted"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "maximum": 1000,
+              "type": "number",
+              "minimum": 1
+            }
+          },
+          {
+            "in": "query",
+            "name": "nextToken",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            },
+            "description": "List of vaults"
+          }
+        },
+        "summary": "Retrieve vaults with pagination and filtering.",
+        "tags": [
+          "Vaults"
+        ],
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      }
+    },
+    "/vaults/{id}": {
+      "get": {
+        "operationId": "VaultsController.get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "pattern": "[^\\/#\\?]+?",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "withMemberships",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "in": "query",
+            "name": "withFiles",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "in": "query",
+            "name": "withFolders",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Vault details"
+          }
+        },
+        "summary": "Gets vault by ID.",
+        "tags": [
+          "Vaults"
+        ],
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      },
+      "patch": {
+        "operationId": "VaultsController.update",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "pattern": "[^\\/#\\?]+?",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VaultsPatchBody"
+              }
+            }
+          },
+          "description": "VaultsPatchBody",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {}
+            },
+            "description": "Vault updated successfully"
+          }
+        },
+        "summary": "Updates vault details.",
+        "tags": [
+          "Vaults"
+        ],
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      },
+      "delete": {
+        "operationId": "VaultsController.delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "pattern": "[^\\/#\\?]+?",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "content": {
+              "application/json": {}
+            },
+            "description": "Vault deleted successfully"
+          }
+        },
+        "summary": "Permanently deletes the vault.",
+        "tags": [
+          "Vaults"
+        ],
+        "security": [
+          {
+            "api_key": []
+          }
+        ],
+        "description": "Vault should be empty before deletion - all files and folders should be permanetly deleted (not only in trash). This operation cannot be undone and should be used with caution."
+      }
+    },
+    "/vaults/{id}/members": {
+      "get": {
+        "operationId": "VaultsController.getMembers",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "pattern": "[^\\/#\\?]+?",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "maximum": 1000,
+              "type": "number",
+              "minimum": 1
+            }
+          },
+          {
+            "in": "query",
+            "name": "nextToken",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Member of the vault is an access to vault. Access is granted by the vault owner. "
+          }
+        },
+        "summary": "Gets vault members.",
+        "tags": [
+          "Vaults"
+        ],
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      },
+      "post": {
+        "operationId": "VaultsController.addMember",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "pattern": "[^\\/#\\?]+?",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddMemberBody"
+              }
+            }
+          },
+          "description": "AddMemberBody",
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {}
+            },
+            "description": "Successful response"
+          }
+        },
+        "summary": "Add member",
+        "tags": [
+          "Vaults"
+        ],
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      }
+    },
+    "/vaults/members/{memberId}": {
+      "get": {
+        "operationId": "VaultsController.getMember",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "memberId",
+            "required": true,
+            "schema": {
+              "pattern": "[^\\/#\\?]+?",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {}
+            },
+            "description": "Successful response"
+          }
+        },
+        "summary": "Get member",
+        "tags": [
+          "Vaults"
+        ],
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      },
+      "patch": {
+        "operationId": "VaultsController.updateMember",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "memberId",
+            "required": true,
+            "schema": {
+              "pattern": "[^\\/#\\?]+?",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateMemberBody"
+              }
+            }
+          },
+          "description": "UpdateMemberBody",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {}
+            },
+            "description": "Successful response"
+          }
+        },
+        "summary": "Update member",
+        "tags": [
+          "Vaults"
+        ],
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      },
+      "delete": {
+        "operationId": "VaultsController.deleteMember",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "memberId",
+            "required": true,
+            "schema": {
+              "pattern": "[^\\/#\\?]+?",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteMemberBody"
+              }
+            }
+          },
+          "description": "DeleteMemberBody",
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "content": {
+              "application/json": {}
+            },
+            "description": "Successful response"
+          }
+        },
+        "summary": "Delete member",
+        "tags": [
+          "Vaults"
+        ],
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      }
+    },
+    "/vaults/{id}/members/join": {
+      "post": {
+        "operationId": "VaultsController.join",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "pattern": "[^\\/#\\?]+?",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {}
+            },
+            "description": "Successful response"
+          }
+        },
+        "summary": "Join",
+        "tags": [
+          "Vaults"
+        ],
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      }
+    },
+    "/trash": {
+      "get": {
+        "operationId": "TrashController.getTrash",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FoldersResponse"
+                }
+              }
+            },
+            "description": "Trash"
+          }
+        },
+        "summary": "Get trash data",
+        "tags": [
+          "Trash"
+        ],
+        "security": [
+          {
+            "api_key": []
+          }
+        ],
+        "description": "Get trash data"
+      },
+      "delete": {
+        "operationId": "TrashController.emptyTrash",
+        "responses": {
+          "204": {
+            "content": {
+              "application/json": {}
+            },
+            "description": "Trash emptied"
+          }
+        },
+        "summary": "Empty trash",
+        "tags": [
+          "Trash"
+        ],
+        "security": [
+          {
+            "api_key": []
+          }
+        ],
+        "description": "Empty trash"
+      }
+    },
+    "/url-aliases": {
+      "post": {
+        "operationId": "UrlAliasesController.create",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateUrlAliasBody"
+              }
+            }
+          },
+          "description": "CreateUrlAliasBody",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UrlAliasResponse"
+                }
+              }
+            },
+            "description": "Url alias"
+          }
+        },
+        "summary": "Create a url alias",
+        "tags": [
+          "Url Aliases"
+        ],
+        "security": [
+          {
+            "api_key": []
+          }
+        ],
+        "description": "Create a url alias"
+      }
+    },
+    "/url-aliases/{alias}": {
+      "head": {
+        "operationId": "UrlAliasesController.head",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "alias",
+            "required": true,
+            "schema": {
+              "pattern": "[^\\/#\\?]+?",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {}
+            },
+            "description": "Successful response"
+          }
+        },
+        "summary": "Head",
+        "tags": [
+          "Url Aliases"
+        ],
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      },
+      "get": {
+        "operationId": "UrlAliasesController.get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "alias",
+            "required": true,
+            "schema": {
+              "pattern": "[^\\/#\\?]+?",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "301": {
+            "content": {
+              "application/json": {}
+            },
+            "description": "Successful response"
+          }
+        },
+        "summary": "Get",
+        "tags": [
+          "Url Aliases"
+        ],
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      }
+    },
+    "/payments/webhook/": {
+      "post": {
+        "operationId": "PaymentsWebhookController.handleWebhook",
+        "responses": {
+          "200": {
+            "content": {
+              "text/html; charset=utf-8": {}
+            },
+            "description": "Successful response"
+          }
+        },
+        "summary": "Handle webhook",
+        "tags": [
+          "Payments Webhook"
+        ]
+      }
+    },
+    "/payments/fiat": {
+      "post": {
+        "operationId": "PaymentsFiatController.createCheckoutSession",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCheckoutSessionRequestPayload"
+              }
+            }
+          },
+          "description": "CreateCheckoutSessionRequestPayload",
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentsFiatResponse"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "summary": "Create a checkout session for a user",
+        "tags": [
+          "Payments"
+        ],
+        "description": "Create a checkout session for a user"
+      }
+    },
+    "/nfts": {
+      "get": {
+        "operationId": "NftsController.list",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "vaultId",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "parentId",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "status",
+            "schema": {
+              "enum": [
+                "active",
+                "revoked",
+                "deleted"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "maximum": 1000,
+              "type": "number",
+              "minimum": 1
+            }
+          },
+          {
+            "in": "query",
+            "name": "nextToken",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/NftResponse"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": "List of NFTs"
+          }
+        },
+        "summary": "List NFTs",
+        "tags": [
+          "NFTs"
+        ],
+        "description": "Returns a list of NFTs owned by the authenticated user",
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      },
+      "post": {
+        "operationId": "NftsController.create",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateNftBody"
+              }
+            }
+          },
+          "description": "CreateNftBody",
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NftResponse"
+                }
+              }
+            },
+            "description": "NFT"
+          }
+        },
+        "summary": "Create NFT",
+        "tags": [
+          "NFTs"
+        ],
+        "description": "Mints a new NFT",
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      }
+    },
+    "/nfts/{id}": {
+      "get": {
+        "operationId": "NftsController.get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "pattern": "[^\\/#\\?]+?",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NftResponse"
+                }
+              }
+            },
+            "description": "NFT"
+          }
+        },
+        "summary": "Get NFT",
+        "tags": [
+          "NFTs"
+        ],
+        "description": "Returns a single NFT by its ID",
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      }
+    },
+    "/payments/crypto": {
+      "post": {
+        "operationId": "PaymentsCryptoController.createPaymentSession",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePaymentSessionPayload"
+              }
+            }
+          },
+          "description": "CreatePaymentSessionPayload",
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentsCryptoResponse"
+                }
+              }
+            },
+            "description": "Payment session created"
+          }
+        },
+        "summary": "Create payment session",
+        "tags": [
+          "Payments"
+        ],
+        "description": "Create payment session"
+      }
+    },
+    "/payments/crypto/{sessionId}": {
+      "patch": {
+        "operationId": "PaymentsCryptoController.patchPaymentSession",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "sessionId",
+            "required": true,
+            "schema": {
+              "pattern": "[^\\/#\\?]+?",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PatchPaymentSessionPayload"
+              }
+            }
+          },
+          "description": "PatchPaymentSessionPayload",
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentsCryptoResponse"
+                }
+              }
+            },
+            "description": "Payment session updated"
+          }
+        },
+        "summary": "Update payment session",
+        "tags": [
+          "Payments"
+        ],
+        "description": "Update payment session. Update can cause change in price."
+      },
+      "get": {
+        "operationId": "PaymentsCryptoController.getPaymentSession",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "sessionId",
+            "required": true,
+            "schema": {
+              "pattern": "[^\\/#\\?]+?",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentsCryptoResponse"
+                }
+              }
+            },
+            "description": "Payment session"
+          }
+        },
+        "summary": "Get payment session",
+        "tags": [
+          "Payments"
+        ],
+        "description": "Get payment session"
+      }
+    },
+    "/payments/crypto/{sessionId}/confirm": {
+      "post": {
+        "operationId": "PaymentsCryptoController.confirmPaymentSession",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "sessionId",
+            "required": true,
+            "schema": {
+              "pattern": "[^\\/#\\?]+?",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConfirmPaymentSessionPayload"
+              }
+            }
+          },
+          "description": "ConfirmPaymentSessionPayload",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentsCryptoResponse"
+                }
+              }
+            },
+            "description": "Payment session confirmed"
+          }
+        },
+        "summary": "Confirm payment session",
+        "tags": [
+          "Payments"
+        ],
+        "description": "Confirm payment session. Verification of payment transaction is scheduled here, before POST /verify to be immune for missing post payment request;POST /verify updates payment session with txId. Verification uses txId to query transaction. If txId is missing (no POST /verify is received), verification is done by transaction signature."
+      }
+    },
+    "/payments/crypto/{sessionId}/verify": {
+      "post": {
+        "operationId": "PaymentsCryptoController.verifyPaymentSession",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "sessionId",
+            "required": true,
+            "schema": {
+              "pattern": "[^\\/#\\?]+?",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VerifyPaymentSessionPayload"
+              }
+            }
+          },
+          "description": "VerifyPaymentSessionPayload",
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {}
+            },
+            "description": "Successful response"
+          }
+        },
+        "summary": "Verify payment session",
+        "tags": [
+          "Payments"
+        ]
+      }
+    },
+    "/subscriptions": {
+      "get": {
+        "operationId": "SubscriptionsController.getSubscriptions",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubscriptionsResponse"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "summary": "Get subscriptions for a user",
+        "tags": [
+          "Subscriptions"
+        ],
+        "security": [
+          {
+            "api_key": []
+          }
+        ],
+        "description": "Get subscriptions for a user"
+      }
+    },
+    "/subscriptions/price": {
+      "get": {
+        "operationId": "SubscriptionsController.getSubscriptionPrice",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "priceLookupKey",
+            "required": true,
+            "schema": {
+              "minLength": 1,
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "quantity",
+            "required": true,
+            "schema": {
+              "minLength": 1,
+              "type": "number"
+            }
+          },
+          {
+            "in": "query",
+            "name": "countryCode",
+            "required": false,
+            "schema": {
+              "minLength": 2,
+              "maxLength": 3,
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "promoCode",
+            "required": false,
+            "schema": {
+              "minLength": 3,
+              "maxLength": 30,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubscriptionsPriceResponse"
+                }
+              }
+            },
+            "description": ""
+          }
+        },
+        "summary": "Get subscription price",
+        "tags": [
+          "Subscriptions"
+        ],
+        "security": [
+          {
+            "api_key": []
+          }
+        ],
+        "description": "Get subscription price"
+      }
+    },
+    "/storage": {
+      "get": {
+        "operationId": "StorageController.getStorage",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StorageBalanceResponse"
+                }
+              }
+            },
+            "description": "Storage balance"
+          }
+        },
+        "summary": "Get storage balance",
+        "tags": [
+          "Storage"
+        ],
+        "security": [
+          {
+            "api_key": []
+          }
+        ],
+        "description": "Simply a classical storage balance tied to your account to prevent you from uploading brontobytes."
+      }
+    },
+    "/uploads/uploads": {
+      "options": {
+        "operationId": "UploadsController.options",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {}
+            },
+            "description": "Successful response"
+          },
+          "204": {
+            "description": "Server supports TUS protocol",
+            "headers": {
+              "Tus-Version": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Tus-Extension": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Tus-Max-Size": {
+                "schema": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        },
+        "summary": "TUS Upload Options",
+        "tags": [
+          "Uploads"
+        ],
+        "security": [
+          {
+            "api_key": []
+          }
+        ],
+        "description": "Returns TUS server options and supported extensions"
+      }
+    },
+    "/uploads/": {
+      "post": {
+        "operationId": "UploadsController.createUpload",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Upload-Length",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Upload-Metadata",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Base64 encoded metadata key-value pairs"
+          },
+          {
+            "name": "Tus-Resumable",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "1.0.0"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {}
+            },
+            "description": "Successful response"
+          },
+          "201": {
+            "description": "Upload created successfully",
+            "headers": {
+              "Location": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "URL for the created upload"
+              },
+              "Tus-Resumable": {
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "1.0.0"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "summary": "Creates a new upload",
+        "tags": [
+          "Uploads"
+        ],
+        "security": [
+          {
+            "api_key": []
+          }
+        ],
+        "description": "This route can be used to upload the full file or its first chunk or only initiate the upload process. The upload id generated by this route is equal to File System's file id. Use the identifier to: \n\n- upload chunks of the file ([PATCH /uploads/{id}](#/Uploads/UploadPatch)) \n\n- drop the upload ([DELETE /uploads/{id}](#/Uploads/UploadDelete) - this is done automatically when the upload expires) \n\n- query the upload status ([HEAD /uploads/{id}](#/Uploads/UploadHead)) \n\n- CRUD the file metadata ([GET](#/Files/FileGet) [PATCH](#/Files/patch_files__fileId_) [DELETE](#/Files/delete_files__fileId_) /files/{id}) \n\n- read file binary data: [GET /files/{id}/data](#/Files/get_files__fileId__data) or preferably over [publicly available CDN](https://cdn.carmella.io/{id})"
+      }
+    },
+    "/uploads/{id}": {
+      "patch": {
+        "operationId": "UploadsController.uploadChunk",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Upload-Offset",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Content-Type",
+            "required": true,
+            "schema": {
+              "pattern": "[^\\/#\\?]+?",
+              "type": "string",
+              "enum": [
+                "application/offset+octet-stream"
+              ]
+            }
+          },
+          {
+            "name": "Tus-Resumable",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "1.0.0"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {}
+            },
+            "description": "Successful response"
+          },
+          "204": {
+            "description": "Upload offset was updated",
+            "headers": {
+              "Upload-Offset": {
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "Tus-Resumable": {
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "1.0.0"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "summary": "Used to resume the upload",
+        "tags": [
+          "Uploads"
+        ],
+        "security": [
+          {
+            "api_key": []
+          }
+        ],
+        "description": "The Server SHOULD accept PATCH requests against any upload URL and apply the bytes contained in the message at the given offset specified by the Upload-Offset header. All PATCH requests MUST use Content-Type: application/offset+octet-stream, otherwise the server SHOULD return a 415 Unsupported Identitydia Type status."
+      },
+      "head": {
+        "operationId": "UploadsController.getUploadInfo",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "pattern": "[^\\/#\\?]+?",
+              "type": "string"
+            }
+          },
+          {
+            "name": "Tus-Resumable",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "1.0.0"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {}
+            },
+            "description": "Upload offset retrieved",
+            "headers": {
+              "Upload-Offset": {
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "Upload-Length": {
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "Tus-Resumable": {
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "1.0.0"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "summary": "Used to determine the offset at which the upload should be continued",
+        "tags": [
+          "Uploads"
+        ],
+        "security": [
+          {
+            "api_key": []
+          }
+        ],
+        "description": "Used to determine the offset at which the upload should be continued."
+      },
+      "delete": {
+        "operationId": "UploadsController.deleteUpload",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "pattern": "[^\\/#\\?]+?",
+              "type": "string"
+            }
+          },
+          {
+            "name": "Tus-Resumable",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "1.0.0"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {}
+            },
+            "description": "Successful response"
+          },
+          "204": {
+            "description": "Upload was terminated",
+            "headers": {
+              "Tus-Resumable": {
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "1.0.0"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "summary": "Drop the upload",
+        "tags": [
+          "Uploads"
+        ],
+        "security": [
+          {
+            "api_key": []
+          }
+        ],
+        "description": "When receiving a DELETE request for an existing upload the Server SHOULD free associated resources and MUST respond with the 204 No Content status confirming that the upload was terminated. For all future requests to this URL, the Server SHOULD respond with the 404 Not Found or 410 Gone status."
+      }
+    },
+    "/data/{id}": {
+      "get": {
+        "operationId": "CdnController.getDataCdn",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "range",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "pattern": "[^\\/#\\?]+?",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "text/html; charset=utf-8": {}
+            },
+            "description": "Successful response"
+          }
+        },
+        "summary": "Get data cdn",
+        "tags": [
+          "CDN"
+        ]
+      }
+    },
+    "/discordbot": {
+      "post": {
+        "operationId": "DiscordBotController.onCommand",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {}
+            }
+          },
+          "description": "",
+          "required": false
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "text/html; charset=utf-8": {}
+            },
+            "description": "Successful response"
+          }
+        },
+        "summary": "On command",
+        "tags": [
+          "Discord Bot"
+        ]
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "https://api.tusky.io"
+    }
+  ],
+  "x-tagGroups": [
+    {
+      "name": "File System",
+      "tags": [
+        "Vaults",
+        "Files",
+        "Uploads",
+        "Folders",
+        "Trash",
+        "Storage"
+      ]
+    },
+    {
+      "name": "Identity",
+      "tags": [
+        "Accounts",
+        "Api Keys",
+        "Authentication"
+      ]
+    },
+    {
+      "name": "Payments",
+      "tags": [
+        "Subscriptions"
+      ]
+    }
+  ],
+  "tags": [
+    {
+      "name": "Files",
+      "description": "Same as in your local file systems, Tusky has files. Tusky's file is a pointer to Walrus blob, keeping replica of: \n\n * `blobId` - Walrus blob's unique indentifier. No two blobs on Walrus may have same blobId. You may retrieve file binary over any Walrus aggregator with your blobId.\n\n * `storedEpoch` - epoch is a unit of time in which Walrus storage nodes operate in. This attribute says when the file was stored on the network.\n\n * `certifiedEpoch` - epoch when the file was certified by the network. This is a moment when a corresponding transaction was finalized and considered valid by the Sui blockchain.\n\n* `ref` - reference SUI transaction. \n\n * `erasureCodeType` - specifies the algorithm or scheme used for encoding and distributing data in the Walrus system.\n\n\n\nUploading file is done by */uploads* endpoint.\n\n You may query your files by `vaultId`, `parentId` (direct parent of files, can be folder or vault) or by default `owner` - you."
+    },
+    {
+      "name": "Folders",
+      "description": "Folders are... folders. Same as in your local file system. Simply put your files inside them for better organization."
+    },
+    {
+      "name": "Uploads",
+      "description": "API operations for resumable uploads.\n\nThat's an implementation of *[TUS protocol](https://tus.io)* and so it may be consumed by any TUS compatible client.\n\nUploads are temp resources, alive only when uploading is in progress.\n\nSuccessfull uplaods create a new file in the file system and trigger async binary publishing to Walrus."
+    },
+    {
+      "name": "Vaults",
+      "description": "Somewhat similar to a drive in classical file systems. You can store your files here.\n\nVaults are shareable sets of files and folders. You may share your vault by adding a member with defined role. Members can be viewers or contributors with assigned storage limits.\n\nThere is no storage limit on your vault. The limit exists but it's tied to your account - see *Storage* resource.\n\nAPI supprts `encrypted` vaults. Those are end-to-end encrypted with your own keys - all files metadata, binaries, folders, even the vault metadata itself is encrypted. Those are great for data you want to keep private but decentralized. Use Tusky's SDK to manage your encrypted vaults."
+    },
+    {
+      "name": "Trash",
+      "description": "Probably same as in your file system. Deleted files are placed here. This is the place for querying, restoring or permanently deleting them from the file system.\n\nEmpting trash means permanently deleting files from Walrus."
+    },
+    {
+      "name": "Storage",
+      "description": "Simply a classical storage balance tied to your account to prevent you from uploading brontobytes.\n\nWe all need some limits."
+    },
+    {
+      "name": "Accounts",
+      "description": "Account data read/write.\n\nNot much to see here for now but it will grow.\n\nHome of Tusky's account specific settings."
+    },
+    {
+      "name": "Api Keys",
+      "description": "API keys are long lived tokens tied to your account. Tusky's API validates requests using them.\n\nYou can generate, revoke, and list yours here.\n\nKeep them safe, otherwise you may find some additional files in your vaults one day."
+    },
+    {
+      "name": "Authentication",
+      "description": "Handles user authentication with supported OAuth providers (Google, Twitch).\n\nSupports challenge-response authentication protocol. Generates user-specific nonces, verifies signature and nonce uniqueness."
+    },
+    {
+      "name": "Subscriptions",
+      "description": "Recurring payment plans that grant access to premium features and services.\n\nYou may need those if long term storage is required. Tusky will keep your files alive on decentralized network when you're subscribed."
+    }
+  ]
+}
