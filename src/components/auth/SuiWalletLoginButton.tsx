@@ -6,14 +6,15 @@ import { useState, useEffect } from "react"
 import { useCurrentAccount, useSignPersonalMessage, ConnectButton, useSuiClient } from "@mysten/dapp-kit"
 import { createTuskyClient } from "@/lib/tusky/client"
 import { formatAddress } from "@mysten/sui.js/utils"
+import { useTusky } from "@/hooks/useTusky"
 
 export function SuiWalletLoginButton() {
   const [isLoading, setIsLoading] = useState(false)
-  const [isTuskySignedIn, setIsTuskySignedIn] = useState(false)
   const [balance, setBalance] = useState<string | null>(null)
   const account = useCurrentAccount()
   const { mutate: signPersonalMessage } = useSignPersonalMessage()
   const suiClient = useSuiClient()
+  const { setClient, isSignedIn, setIsSignedIn } = useTusky()
 
   // ウォレット接続時にSUIのバランスを取得
   useEffect(() => {
@@ -49,11 +50,12 @@ export function SuiWalletLoginButton() {
 
       // Sui Walletのアカウント情報とサイン関数を使ってTuskyクライアントを初期化
       const tuskyClient = await createTuskyClient(signPersonalMessage, account)
+      setClient(tuskyClient)
       
       // Tuskyにサインイン (これによりウォレットのサイン要求が表示される)
       await tuskyClient.auth.signIn()
       
-      setIsTuskySignedIn(true)
+      setIsSignedIn(true)
       logger.info('[Auth] Successfully signed in with Tusky', {
         address: account.address
       })
@@ -73,7 +75,7 @@ export function SuiWalletLoginButton() {
   }
 
   // アカウントが接続されているが、Tuskyにサインインしていない場合
-  if (!isTuskySignedIn) {
+  if (!isSignedIn) {
     return (
       <div className="flex flex-col gap-2">
         <div className="text-sm text-gray-500 mb-1">

@@ -1,5 +1,4 @@
 import { Tusky } from '@tusky-io/ts-sdk';
-import { createContext, useContext } from 'react';
 
 // TuskyClientの型を定義
 export type TuskyClientType = Awaited<ReturnType<typeof Tusky.init>>;
@@ -19,15 +18,14 @@ export const createTuskyClient = async (signPersonalMessage: any, account: any) 
   }
 };
 
-// Tuskyクライアントのコンテキスト
-export const TuskyContext = createContext<TuskyClientType | null>(null);
-
-// Tuskyクライアントを使用するためのフック
-export const useTusky = () => {
-  const context = useContext(TuskyContext);
-  if (!context) {
-    throw new Error('useTusky must be used within a TuskyProvider');
+// APIキーを使用してサーバーサイドでTuskyクライアントを初期化する
+export const createServerTuskyClient = async (apiKey: string) => {
+  try {
+    // Server-side client initialization with API key
+    return await Tusky.init({ apiKey });
+  } catch (error) {
+    console.error('Failed to initialize server-side Tusky client:', error);
+    throw error;
   }
-  return context;
 };
 

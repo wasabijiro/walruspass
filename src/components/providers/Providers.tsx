@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { getFullnodeUrl } from "@mysten/sui.js/client";
 import { useState } from "react";
 import '@mysten/dapp-kit/dist/index.css';
+import { TuskyProvider } from "@/components/providers/TuskyProvider";
 
 // Suiネットワーク設定
 const networks = {
@@ -20,7 +21,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
     <QueryClientProvider client={queryClient}>
       <SuiClientProvider networks={networks} defaultNetwork="testnet">
         <WalletProvider>
-          {children}
+          <TuskyProvider>
+            {children}
+          </TuskyProvider>
         </WalletProvider>
       </SuiClientProvider>
     </QueryClientProvider>

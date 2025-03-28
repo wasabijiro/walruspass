@@ -1,30 +1,33 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { supabase } from "@/lib/api/client"
 import { logger } from "@/lib/logger"
 import { useState } from "react"
-import { useRouter } from "next/navigation"
+import { useTusky } from "@/hooks/useTusky"
 
-export function LogoutButton() {
+export function TuskyLogoutButton() {
   const [isLoading, setIsLoading] = useState(false)
-  const router = useRouter()
+  const { client, setClient, setIsSignedIn } = useTusky()
 
-  const handleSignOut = async () => {
+  const handleTuskySignOut = async () => {
     try {
       setIsLoading(true)
-      logger.info('Initiating sign out')
+      logger.info('[Auth] Signing out from Tusky')
       
-      const { error } = await supabase.auth.signOut()
-      if (error) {
-        logger.error('Sign out failed', { error })
-      } else {
-        logger.info('Sign out successful')
-        router.push('/')
-        router.refresh()
+      if (!client) {
+        throw new Error('Tusky client not initialized')
       }
+      
+      // Tuskyクライアントからサインアウト
+      await client.auth.signOut()
+      
+      // 状態をリセット
+      setClient(null)
+      setIsSignedIn(false)
+      
+      logger.info('[Auth] Successfully signed out from Tusky')
     } catch (error) {
-      logger.error('Unexpected error during sign out', { error })
+      logger.error('[Auth] Tusky sign out failed', { error })
     } finally {
       setIsLoading(false)
     }
@@ -32,12 +35,12 @@ export function LogoutButton() {
 
   return (
     <Button
-      variant="ghost"
-      onClick={handleSignOut}
+      variant="outline"
+      onClick={handleTuskySignOut}
       disabled={isLoading}
       className="text-red-600 hover:text-red-800 transition-colors"
     >
-      {isLoading ? "ログアウト中..." : "ログアウト"}
+      {isLoading ? "Signing out..." : "Sign out from Tusky"}
     </Button>
   )
 }
