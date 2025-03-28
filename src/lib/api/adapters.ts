@@ -9,9 +9,20 @@ import {
   GetProfileByIdResponse,
   UpdateProfileRequest,
   UpdateProfileResponse,
+  CreateVaultRequest,
+  CreateVaultResponse,
+  ListFilesRequest,
+  ListFilesResponse,
+  CreateFileRequest,
+  CreateFileResponse
 } from './types'
-import { profileModelToDomain } from './domain'
+import { 
+  profileModelToDomain, 
+  tuskyVaultModelToDomain, 
+  tuskyFileModelToDomain 
+} from './domain'
 import { uploadAvatar } from './storage'
+import { ProfileModel, TuskyFileModel, TuskyVaultModel } from './models'
 
 export class SupabaseRepository implements DbRepository {
   constructor(private readonly client: SupabaseClient) {}
@@ -40,7 +51,7 @@ export class SupabaseRepository implements DbRepository {
         ))
       }
 
-      return ok(profileModelToDomain(data) as GetProfileByIdResponse)
+      return ok(profileModelToDomain(data as ProfileModel))
     } catch (error) {
       logger.error('Failed to fetch profile', { id: request.userId, error })
       return err(createApiError(
@@ -113,11 +124,11 @@ export class SupabaseRepository implements DbRepository {
         ))
       }
 
-      const profile = profileModelToDomain(data)
+      const profile = profileModelToDomain(data as ProfileModel)
       return ok({
         success: true,
         profile
-      } as UpdateProfileResponse)
+      })
     } catch (error) {
       logger.error('Failed to update profile', { error })
       return err(createApiError(
@@ -125,6 +136,240 @@ export class SupabaseRepository implements DbRepository {
         error instanceof Error ? error.message : 'Unknown error occurred',
         error
       ))
+    }
+  }
+
+  /**
+   * Create a vault record in Supabase
+   * @param request Vault creation parameters
+   * @returns Result with created vault or error
+   */
+  async createVault(request: CreateVaultRequest): Promise<Result<CreateVaultResponse, ApiError>> {
+    try {
+      const { name, vault_id, wallet_address, encrypted = true } = request
+      
+      logger.info('Creating vault record in database', { name, vault_id, wallet_address })
+      
+      // Check if vault already exists
+      const { data: existingVault, error: checkError } = await this.client
+        .from('tusky_vaults')
+        .select('id')
+        .eq('vault_id', vault_id)
+        .eq('wallet_address', wallet_address)
+        .maybeSingle()
+      
+      if (checkError) {
+        logger.error('Error checking for existing vault', { error: checkError })
+        return err(createApiError('database', 'Failed to check for existing vault', checkError))
+      }
+      
+      // If vault already exists, return it
+      if (existingVault) {
+        logger.info('Vault already exists', { id: existingVault.id, vault_id, wallet_address })
+        
+        // Get full vault data
+        const { data: vaultData, error: getError } = await this.client
+          .from('tusky_vaults')
+          .select('*')
+          .eq('id', existingVault.id)
+          .single()
+        
+        if (getError) {
+          logger.error('Error retrieving existing vault', { error: getError })
+          return err(createApiError('database', 'Failed to retrieve existing vault', getError))
+        }
+        
+        const vault = tuskyVaultModelToDomain(vaultData as TuskyVaultModel)
+        
+        return ok({
+          success: true,
+          vault
+        })
+      }
+      
+      // Save vault metadata to database
+      const { data: vaultData, error: vaultError } = await this.client
+        .from('tusky_vaults')
+        .insert({
+          name,
+          wallet_address,
+          vault_id,
+          encrypted
+        })
+        .select()
+        .single()
+      
+      if (vaultError) {
+        logger.error('Error saving vault metadata', { error: vaultError })
+        return err(createApiError('database', 'Failed to save vault metadata', vaultError))
+      }
+      
+      logger.info('Vault metadata saved successfully', { 
+        id: vaultData.id, 
+        vault_id, 
+        wallet_address 
+      })
+      
+      const vault = tuskyVaultModelToDomain(vaultData as TuskyVaultModel)
+      
+      return ok({
+        success: true,
+        vault
+      })
+    } catch (error) {
+      logger.error('Unexpected error in vault creation', { error })
+      return err(createApiError('unknown', 'An unexpected error occurred while creating vault', error))
+    }
+  }
+
+  /**
+   * List files from Supabase matching the specified criteria
+   * @param request File listing parameters
+   * @returns Result with list of files or error
+   */
+  async listFiles(request: ListFilesRequest): Promise<Result<ListFilesResponse, ApiError>> {
+    try {
+      const { vaultId, wallet_address, limit = 100, offset = 0 } = request
+      
+      logger.info('Fetching Tusky files from database', { vaultId, wallet_address, limit, offset })
+      
+      // Start by fetching vaults
+      let vaultsQuery = this.client
+        .from('tusky_vaults')
+        .select('*')
+      
+      // Apply wallet address filter if provided
+      if (wallet_address) {
+        vaultsQuery = vaultsQuery.eq('wallet_address', wallet_address)
+      }
+      
+      // Apply vault ID filter if provided
+      if (vaultId) {
+        vaultsQuery = vaultsQuery.eq('id', vaultId)
+      }
+      
+      const { data: vaultsData, error: vaultsError } = await vaultsQuery
+      
+      if (vaultsError) {
+        logger.error('Error fetching vaults', { error: vaultsError })
+        return err(createApiError('database', 'Failed to fetch vaults', vaultsError))
+      }
+      
+      const vaults = vaultsData.map(v => tuskyVaultModelToDomain(v as TuskyVaultModel))
+      
+      if (vaults.length === 0) {
+        return ok({
+          items: [],
+          count: 0
+        })
+      }
+      
+      // Now fetch files using the vault IDs
+      const vaultIds = vaults.map(v => v.id)
+      
+      // Start building the query
+      let filesQuery = this.client
+        .from('tusky_files')
+        .select('*', { count: 'exact' })
+        .in('vault_id', vaultIds)
+      
+      // Apply pagination
+      filesQuery = filesQuery.range(offset, offset + limit - 1)
+      
+      // Execute the query
+      const { data: filesData, error: filesError, count } = await filesQuery
+      
+      if (filesError) {
+        logger.error('Error fetching Tusky files', { error: filesError })
+        return err(createApiError('database', 'Failed to fetch files', filesError))
+      }
+      
+      // Map files to domain models
+      const items = filesData.map(fileModel => {
+        const vault = vaults.find(v => v.id === fileModel.vault_id)!
+        return tuskyFileModelToDomain(fileModel as TuskyFileModel, vault)
+      })
+      
+      logger.info('Files fetched successfully', { 
+        count: items.length, 
+        total: count
+      })
+      
+      return ok({
+        items,
+        count: count || 0
+      })
+    } catch (error) {
+      logger.error('Unexpected error in file listing', { error })
+      return err(createApiError('unknown', 'An unexpected error occurred while listing files', error))
+    }
+  }
+
+  /**
+   * Create a file record in Supabase
+   * @param request File creation parameters
+   * @returns Result with created file or error
+   */
+  async createFile(request: CreateFileRequest): Promise<Result<CreateFileResponse, ApiError>> {
+    try {
+      const { 
+        file_id, 
+        upload_id, 
+        name, 
+        vault_id, 
+        wallet_address 
+      } = request
+      
+      logger.info('Creating file record in database', { 
+        file_id,
+        name, 
+        vault_id,
+        wallet_address 
+      })
+      
+      // Check if vault exists and belongs to the wallet
+      const { data: vaultData, error: vaultError } = await this.client
+        .from('tusky_vaults')
+        .select('*')
+        .eq('id', vault_id)
+        .eq('wallet_address', wallet_address)
+        .single()
+      
+      if (vaultError) {
+        logger.warn('Vault not found or not owned by wallet', { vault_id, wallet_address, error: vaultError })
+        return err(createApiError('not_found', 'Vault not found or not owned by wallet', vaultError))
+      }
+      
+      const vault = tuskyVaultModelToDomain(vaultData as TuskyVaultModel)
+      
+      // Save file metadata to database
+      const { data: fileData, error: fileError } = await this.client
+        .from('tusky_files')
+        .insert({
+          vault_id,
+          file_id,
+          upload_id,
+          name
+        })
+        .select()
+        .single()
+      
+      if (fileError) {
+        logger.error('Error saving file metadata', { error: fileError })
+        return err(createApiError('database', 'Failed to save file metadata', fileError))
+      }
+      
+      logger.info('File metadata saved successfully', { id: fileData.id, file_id, vault_id })
+      
+      const file = tuskyFileModelToDomain(fileData as TuskyFileModel, vault)
+      
+      return ok({
+        success: true,
+        file
+      })
+    } catch (error) {
+      logger.error('Unexpected error in file creation', { error })
+      return err(createApiError('unknown', 'An unexpected error occurred while creating file', error))
     }
   }
 }

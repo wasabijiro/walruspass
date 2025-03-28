@@ -127,3 +127,112 @@ export async function uploadFileToVault(client: TuskyClientType, vaultId: string
     throw error;
   }
 }
+
+/**
+ * Lists files in a vault with pagination support
+ * @param client - Tusky client instance
+ * @param options - List files options
+ * @returns Array of files
+ */
+export async function listFiles(client: TuskyClientType, options: {
+  vaultId?: string;
+  parentId?: string;
+  uploadId?: string;
+  status?: 'active' | 'revoked' | 'deleted';
+  limit?: number;
+  nextToken?: string;
+}) {
+  try {
+    logger.info('[Vault] Listing files', { options });
+    
+    // List files with provided options
+    const files = await client.file.list(options);
+    
+    logger.info('[Vault] Files retrieved successfully', { 
+      count: files.items?.length || 0,
+      hasMore: !!files.nextToken
+    });
+    
+    // サポートされている形式のレスポンスに対応
+    if (Array.isArray(files)) {
+      return { items: files, nextToken: null };
+    } else if (files.items && Array.isArray(files.items)) {
+      return { items: files.items, nextToken: files.nextToken };
+    } else if (files.data && Array.isArray(files.data)) {
+      return { items: files.data, nextToken: files.nextToken };
+    }
+    
+    // 何も見つからなかった場合は空の結果を返す
+    logger.warn('[Vault] Could not determine files structure, returning empty array');
+    return { items: [], nextToken: null };
+  } catch (error) {
+    logger.error('[Vault] Failed to list files', { error, options });
+    throw error;
+  }
+}
+
+/**
+ * Retrieves file details
+ * @param client - Tusky client instance
+ * @param fileId - ID of the file
+ * @returns File details
+ */
+export async function getFile(client: TuskyClientType, fileId: string) {
+  try {
+    logger.info('[Vault] Getting file details', { fileId });
+    
+    // Get file details
+    const file = await client.file.get(fileId);
+    
+    logger.info('[Vault] File details retrieved successfully', { fileId });
+    
+    return file;
+  } catch (error) {
+    logger.error('[Vault] Failed to get file details', { error, fileId });
+    throw error;
+  }
+}
+
+/**
+ * Downloads a file
+ * @param client - Tusky client instance
+ * @param fileId - ID of the file to download
+ * @returns File data
+ */
+export async function downloadFile(client: TuskyClientType, fileId: string) {
+  try {
+    logger.info('[Vault] Downloading file', { fileId });
+    
+    // Download the file
+    const fileData = await client.file.download(fileId);
+    
+    logger.info('[Vault] File downloaded successfully', { fileId });
+    
+    return fileData;
+  } catch (error) {
+    logger.error('[Vault] Failed to download file', { error, fileId });
+    throw error;
+  }
+}
+
+/**
+ * Deletes a file
+ * @param client - Tusky client instance
+ * @param fileId - ID of the file to delete
+ * @returns Success status
+ */
+export async function deleteFile(client: TuskyClientType, fileId: string) {
+  try {
+    logger.info('[Vault] Deleting file', { fileId });
+    
+    // Delete the file
+    await client.file.delete(fileId);
+    
+    logger.info('[Vault] File deleted successfully', { fileId });
+    
+    return true;
+  } catch (error) {
+    logger.error('[Vault] Failed to delete file', { error, fileId });
+    throw error;
+  }
+}

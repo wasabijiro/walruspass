@@ -1,4 +1,4 @@
-import { ProfileModel } from "./models"
+import { ProfileModel, TuskyFileModel, TuskyVaultModel } from "./models"
 
 export type ProfileId = string
 
@@ -13,5 +13,47 @@ export function profileModelToDomain(model: ProfileModel): Profile {
     id: model.id,
     displayName: model.display_name,
     avatarUrl: model.avatar_url
+  }
+}
+
+export type TuskyVaultId = string
+
+export interface TuskyVault {
+  id: TuskyVaultId
+  name: string
+  creatorAddress: string
+  encrypted: boolean
+}
+
+export function tuskyVaultModelToDomain(model: TuskyVaultModel): TuskyVault {
+  return {
+    id: model.id,
+    name: model.name,
+    creatorAddress: model.wallet_address,
+    encrypted: model.encrypted
+  }
+}
+
+export type TuskyFileId = string
+
+export interface TuskyFile {
+  id: TuskyFileId
+  vaultId: TuskyVaultId
+  vaultName: string
+  creatorAddress: string
+  encrypted: boolean
+  fileId: string
+  uploadId: string
+}
+
+export function tuskyFileModelToDomain(model: TuskyFileModel, vault: TuskyVault): TuskyFile {
+  return {
+    id: model.id,
+    vaultId: model.vault_id,
+    vaultName: vault.name,
+    creatorAddress: vault.creatorAddress,
+    encrypted: vault.encrypted,
+    fileId: model.file_id,
+    uploadId: model.upload_id
   }
 }
