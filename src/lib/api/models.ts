@@ -16,6 +16,7 @@ export interface TuskyVaultModel {
 export interface TuskyFileModel {
   id: string
   vault_id: string
-  file_id: string
   upload_id: string
+  created_at: string
+  updated_at: string
 }

@@ -30,9 +30,9 @@ export interface CreateVaultResponse {
 
 // `POST /api/tusky/files/upload`
 export interface CreateFileRequest {
-  file_id: string
+  file_id: string  // 内部使用のみ
   upload_id: string
-  name: string
+  name: string     // 内部使用のみ
   vault_id: string
   wallet_address: string
 }

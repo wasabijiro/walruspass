@@ -154,7 +154,7 @@ export class SupabaseRepository implements DbRepository {
       const { data: existingVault, error: checkError } = await this.client
         .from('tusky_vaults')
         .select('id')
-        .eq('vault_id', vault_id)
+        .eq('id', vault_id)
         .eq('wallet_address', wallet_address)
         .maybeSingle()
       
@@ -191,9 +191,9 @@ export class SupabaseRepository implements DbRepository {
       const { data: vaultData, error: vaultError } = await this.client
         .from('tusky_vaults')
         .insert({
+          id: vault_id,
           name,
           wallet_address,
-          vault_id,
           encrypted
         })
         .select()
@@ -313,16 +313,13 @@ export class SupabaseRepository implements DbRepository {
   async createFile(request: CreateFileRequest): Promise<Result<CreateFileResponse, ApiError>> {
     try {
       const { 
-        file_id, 
         upload_id, 
-        name, 
         vault_id, 
         wallet_address 
       } = request
       
       logger.info('Creating file record in database', { 
-        file_id,
-        name, 
+        upload_id,
         vault_id,
         wallet_address 
       })
@@ -347,9 +344,7 @@ export class SupabaseRepository implements DbRepository {
         .from('tusky_files')
         .insert({
           vault_id,
-          file_id,
-          upload_id,
-          name
+          upload_id
         })
         .select()
         .single()
@@ -359,7 +354,7 @@ export class SupabaseRepository implements DbRepository {
         return err(createApiError('database', 'Failed to save file metadata', fileError))
       }
       
-      logger.info('File metadata saved successfully', { id: fileData.id, file_id, vault_id })
+      logger.info('File metadata saved successfully', { id: fileData.id, upload_id, vault_id })
       
       const file = tuskyFileModelToDomain(fileData as TuskyFileModel, vault)
       

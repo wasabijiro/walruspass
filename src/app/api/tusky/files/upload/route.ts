@@ -10,9 +10,9 @@ import { CreateFileRequest } from '@/lib/api/types'
  * @auth Not Required
  * @param request - Request body containing file and vault information
  * @body {Object}
- *   - file_id {string} The file ID in Tusky - Required
+ *   - file_id {string} The file ID in Tusky (used only for display, not stored in DB) - Required
  *   - upload_id {string} The upload ID from Tusky - Required
- *   - name {string} File name - Required
+ *   - name {string} File name (used only for display, not stored in DB) - Required
  *   - mime_type {string} File MIME type - Optional
  *   - size {number} File size in bytes - Optional
  *   - vault_id {string} The vault UUID in our database - Required

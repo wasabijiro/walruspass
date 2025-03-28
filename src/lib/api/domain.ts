@@ -53,7 +53,7 @@ export function tuskyFileModelToDomain(model: TuskyFileModel, vault: TuskyVault)
     vaultName: vault.name,
     creatorAddress: vault.creatorAddress,
     encrypted: vault.encrypted,
-    fileId: model.file_id,
+    fileId: model.id,
     uploadId: model.upload_id
   }
 }

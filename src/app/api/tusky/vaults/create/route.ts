@@ -72,7 +72,6 @@ export async function POST(request: NextRequest) {
       (response) => {
         logger.info('Vault created successfully', { 
           id: response.vault.id,
-          vault_id: response.vault.id, // ドメインオブジェクトにはvault_idがないので注意
           success: response.success
         })
         return NextResponse.json(response)
