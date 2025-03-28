@@ -1,7 +1,6 @@
 "use client"
 
 import { TuskyLogoutButton } from "@/components/auth/LogoutButton"
-import { useAuth } from "@/hooks/useAuth"
 import { Button } from "@/components/ui/button"
 import { useRouter } from "next/navigation"
 import { SuiWalletLoginButton } from "@/components/auth/SuiWalletLoginButton"
@@ -10,9 +9,9 @@ import { useCurrentAccount, useSuiClient } from "@mysten/dapp-kit"
 import { formatAddress } from "@mysten/sui.js/utils"
 import { useEffect, useState } from "react"
 import { logger } from "@/lib/logger"
+import { ListChecks } from "lucide-react"
 
 export function Header() {
-  const { isAuthenticated, loading } = useAuth()
   const { isSignedIn } = useTusky()
   const router = useRouter()
   const account = useCurrentAccount()
@@ -50,15 +49,18 @@ export function Header() {
 
         {/* Right side - Auth buttons */}
         <div className="flex items-center gap-4">
-          {!loading && isAuthenticated && (
-            <Button
-              variant="ghost"
-              onClick={() => router.push('/profile')}
-              className="text-gray-600 hover:text-gray-800 transition-colors"
-            >
-              Profile
-            </Button>
-          )}
+            <>
+              {isSignedIn && (
+                <Button
+                  variant="ghost"
+                  onClick={() => router.push('/list')}
+                  className="text-gray-600 hover:text-gray-800 transition-colors flex items-center"
+                >
+                  <ListChecks className="mr-2 h-4 w-4" />
+                  List NFT
+                </Button>
+              )}
+            </>
           
           {/* 認証状態に基づいてボタンを表示 */}
           <div className="flex items-center gap-2">
