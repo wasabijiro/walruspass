@@ -44,3 +44,13 @@ yarn-error.log*
 next-env.d.ts
 
 .cursorrules
+
+
+memory/activeContext.md
+memory/backend.md
+memory/productContext.md
+memory/progress.md
+memory/projectBrief.md
+memory/schema.md
+memory/systemPatterns.md
+memory/techContext.md

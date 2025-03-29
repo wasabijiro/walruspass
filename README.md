@@ -1,36 +1,226 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# WalrusPass
 
-## Getting Started
 
-First, run the development server:
+## What It Does
+**WalrusPass** is a decentralized platform that enables content creators to provide exclusive content—such as music and videos—that can only be accessed by users holding a specific NFT (using NFTs as access tokens).
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **Encrypted Upload of Exclusive Content:**  
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+ Content such as images and videos is encrypted end-to-end before being uploaded to Walrus.
 
-## Learn More
 
-To learn more about Next.js, take a look at the following resources:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- **Decryption Accessible Only to NFT Holders:**  
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+ Once an NFT is minted, only its owner can use a dedicated decryption key to access the encrypted content.
 
-## Deploy on Vercel
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **A Trustworthy Ecosystem between Creators and Users:**  
+
+ By linking content ownership to blockchain-based NFTs and automatically granting access rights exclusively to NFT holders, a highly reliable relationship is established.
+
+
+
+- **Use Cases:**  
+
+ Musicians can offer albums or live concert footage, video creators can provide exclusive clips, and online courses can feature premium videos—all designed to deliver experiences exclusively for NFT holders.
+
+
+
+---
+
+
+
+## The Problem It Solves
+
+
+Walrus’s decentralized storage offers significant benefits such as censorship resistance and fault tolerance by eliminating reliance on centralized servers. This allows users to truly own their digital assets by storing them across a distributed network. However, decentralized storage also faces challenges in handling private data. Specifically, implementing the encryption/decryption process and strictly controlling access to data are complex tasks. This becomes particularly problematic when using NFT token gateways, where it is essential to verify NFT ownership and ensure that only NFT holders receive the decryption keys for encrypted content. Without a robust mechanism, digital assets may end up stored in centralized cloud services (like AWS), which negates the advantages of decentralized storage.
+
+
+
+---
+
+
+
+## The Solution – Encryption and Key Management with Tusky
+
+
+Tusky provides an end-to-end data encryption solution that leverages user and Vault key management to achieve restricted access:
+
+
+
+- **Client-Side Key Pair Generation:**  
+
+ When logging in with Tusky, users generate their own key pair on the front end.  
+
+ - **User Public Key:** Used for server-side processes and Vault sharing.  
+
+ - **User Private Key:** Derived from the user’s password or backup phrase, it is used for encryption and stored on the server in an encrypted form.
+
+
+
+- **Key Generation and Sharing during Vault Creation:**  
+
+ When a seller (Vault owner) creates a Vault, a dedicated key pair for that Vault is generated.  
+
+ - The Vault’s **public key** is used for encrypting content within the Vault, while its **private key** is necessary for decryption.  
+
+ - When granting access to a buyer (NFT holder), the seller’s backend uses its stored authentication credentials to encrypt the Vault’s private key with the buyer’s user public key.  
+
+ - This process allows the buyer to decrypt the Vault’s private key using their own user private key and obtain the decryption key needed to access the exclusive content.
+
+
+
+- **Enhanced Security:**  
+
+ The seller’s authentication credentials (such as API keys) are securely managed on the backend and never transmitted to the front end; they are used only when necessary. In the future, the introduction of schemes like the Seal encryption method is planned to further reinforce access control for private vaults with token restrictions.
+
+
+
+---
+
+
+
+### Challenges Encountered
+
+
+
+- **Integration of On-Chain and Off-Chain Processes:**  
+
+ Detecting NFT mint events and linking them to the automatic Vault sharing process posed significant technical challenges. Relying on the Tusky SDK sometimes led to issues where smart contract events did not correctly trigger the off-chain access control procedures.
+
+
+
+- **Managing Authentication Credentials:**  
+
+ Finding a secure method to manage seller authentication credentials (e.g., API keys) on the backend was challenging. While the demo automated Vault sharing by storing these credentials on the backend, this approach could compromise complete decentralization. There is a need to explore more decentralized authentication methods (such as utilizing Lit Protocol or upgrading the Seal encryption scheme).
+
+
+
+---
+
+
+
+## Technologies Used
+
+
+- **Sui Move:**  
+
+ - NFT minting, ownership management, and event triggering  
+
+ - Implementation of smart contracts in Sui Move
+
+- **Walrus:**  
+
+ - Decentralized storage network  
+
+ - Storage of encrypted content
+
+- **Tusky SDK / API:**  
+
+ - User authentication, Vault management, file uploads/downloads  
+
+ - Vault sharing functionality
+
+- **Next.js:**  
+
+ - Front-end development  
+
+ - Backend (API routes)
+
+- **Supabase:**  
+
+ - Database management
+
+
+
+---
+
+
+
+## How It Was Built
+
+
+1. **Smart Contract Implementation:**  
+
+  - Developed NFT minting smart contracts using Sui Move, triggering events (e.g., “Minted”) upon minting.
+
+
+
+2. **Client-Side Key Management:**  
+
+  - Integrated the Tusky SDK, allowing users to generate their own key pairs during login.  
+
+  - The user’s private key is encrypted using a key derived from their password and stored in encrypted form on the server.  
+
+  - When creating a Vault, the seller generates a new Vault key pair and encrypts the Vault’s private key with the buyer’s user public key.
+
+
+
+3. **Frontend Integration:**  
+
+  - Developed a user interface using React and Next.js that enables users to easily upload content, manage their Vaults, and access exclusive content.
+
+
+
+---
+
+
+
+## What We Learned
+
+
+- **The Importance of On-Chain and Off-Chain Integration:**  
+
+ Synchronizing NFT mint events with off-chain automatic access control processes proved to be challenging in both implementation and operation.
+
+
+
+- **Decentralized Authentication and Key Management:**  
+
+ The project underscored both the importance and the challenges of allowing users to manage their own data encryption and access control through key management.
+
+
+
+- **The Potential of Decentralized Storage:**  
+
+ Utilizing the Walrus and Tusky APIs demonstrated that a new paradigm of digital asset management—free from centralized service dependency—is achievable.
+
+
+
+---
+
+
+
+## What’s Next
+
+
+- **Enhancing Smart Contract Integration:**  
+
+ Improve the accuracy of NFT mint event detection and build a more secure off-chain relay service.
+
+
+
+- **Exploring Decentralized IDs (DID) and Delegated Signatures:**  
+
+ Consider decentralized methods for managing seller authentication credentials without storing them directly on the backend.
+
+
+
+- **Expanding to New Use Cases:**  
+
+ - **Decentralized YouTube for Exclusive Content:** Storing exclusive content on decentralized storage.  
+
+ - **Decentralized Supply Chain Management:** Real-time sharing of product movement records and quality inspection data.  
+
+ - **Decentralized Medical Data Sharing:** Secure storage and sharing of patient data to enhance diagnostic and treatment quality.  
+
+ - **Media Subscription Models:** Allow creators to provide decryption keys for exclusive content to paying users.
+
+
+
+ Additionally, Tusky plans to introduce the Seal encryption scheme soon, which will offer token-restricted access to private vaults and further strengthen exclusive access control for NFT holders.
+
