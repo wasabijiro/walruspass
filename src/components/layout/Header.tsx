@@ -9,7 +9,7 @@ import { useCurrentAccount, useSuiClient } from "@mysten/dapp-kit"
 import { formatAddress } from "@mysten/sui.js/utils"
 import { useEffect, useState } from "react"
 import { logger } from "@/lib/logger"
-import { ListChecks } from "lucide-react"
+import { Copy } from "lucide-react"
 
 export function Header() {
   const { isSignedIn } = useTusky()
@@ -39,51 +39,76 @@ export function Header() {
     fetchBalance()
   }, [account, suiClient])
 
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text)
+      .then(() => {
+        logger.info('[UI] Address copied to clipboard')
+      })
+      .catch((error) => {
+        logger.error('[UI] Failed to copy address', { error })
+      })
+  }
+
   return (
-    <header className="w-full border-b">
-      <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-        {/* Left side - Logo or title */}
-        <div>
-          <h1 
-            className="text-xl font-bold cursor-pointer" 
-            onClick={() => router.push('/')}
-          >
-            NFT GateKeeper
-          </h1>
+    <header className="w-full border-b bg-background">
+      <div className="container mx-auto px-4 h-20 flex items-center justify-between">
+        {/* Left side - Logo with title */}
+        <div className="flex items-center gap-3 cursor-pointer" onClick={() => router.push('/')}>
+          <img src="/logo.png" alt="WalrusPass Logo" className="h-10 w-auto" />
+          <h1 className="text-xl font-bold">WalrusPass</h1>
         </div>
 
+        {/* Center - Main action button */}
+        <div className="hidden md:flex">
+          <Button
+            variant="ghost"
+            size="default"
+            onClick={() => router.push('/list')}
+            className="font-medium hover:bg-transparent hover:text-primary/80 transition-colors text-lg"
+          >
+            List
+          </Button>
+        </div>
+        
         {/* Right side - Auth buttons */}
         <div className="flex items-center gap-4">
-            <>
-              {isSignedIn && (
-                <Button
-                  variant="ghost"
-                  onClick={() => router.push('/list')}
-                  className="text-gray-600 hover:text-gray-800 transition-colors flex items-center"
-                >
-                  <ListChecks className="mr-2 h-4 w-4" />
-                  List NFT
-                </Button>
-              )}
-            </>
-          
-          {/* 認証状態に基づいてボタンを表示 */}
-          <div className="flex items-center gap-2">
-            {isSignedIn && account && (
-              <>
-                <div className="flex flex-col mr-2">
-                  <div className="text-sm">
-                    <span className="text-gray-500">Address:</span> {formatAddress(account.address)}
-                  </div>
-                  <div className="text-sm">
-                    <span className="text-gray-500">Balance:</span> {balance} SUI
-                  </div>
+          {isSignedIn && account ? (
+            <div className="flex items-center gap-3">
+              <div className="bg-secondary/30 px-3 py-2 rounded-lg hidden md:block">
+                <div className="text-sm font-medium flex items-center">
+                  <span className="text-primary/80">Address:</span>
+                  <span className="ml-1">{formatAddress(account.address)}</span>
+                  <button 
+                    onClick={() => copyToClipboard(account.address)}
+                    className="ml-1 p-1 rounded-md hover:bg-primary/10 transition-colors"
+                    title="Copy address to clipboard"
+                  >
+                    <Copy className="size-3.5 text-primary/60" />
+                  </button>
                 </div>
-                <TuskyLogoutButton />
-              </>
-            )}
-            {!isSignedIn && <SuiWalletLoginButton />}
-          </div>
+                <div className="text-sm font-medium">
+                  <span className="text-primary/80">Balance:</span> {balance} SUI
+                </div>
+              </div>
+              <TuskyLogoutButton />
+            </div>
+          ) : (
+            <SuiWalletLoginButton />
+          )}
+        </div>
+      </div>
+      
+      {/* Mobile navigation */}
+      <div className="md:hidden border-t">
+        <div className="container mx-auto px-4 py-2 flex justify-center">
+          <Button
+            variant="ghost"
+            size="default"
+            onClick={() => router.push('/list')}
+            className="w-full font-medium hover:bg-transparent hover:text-primary/80 transition-colors text-lg"
+          >
+            List
+          </Button>
         </div>
       </div>
     </header>

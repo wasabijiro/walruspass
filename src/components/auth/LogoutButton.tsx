@@ -38,9 +38,9 @@ export function TuskyLogoutButton() {
       variant="outline"
       onClick={handleTuskySignOut}
       disabled={isLoading}
-      className="text-red-600 hover:text-red-800 transition-colors"
+      className="border-primary/20 hover:bg-destructive/10 hover:text-destructive hover:border-destructive/30 transition-colors"
     >
-      {isLoading ? "Signing out..." : "Sign out from Tusky"}
+      {isLoading ? "Signing out..." : "Sign out"}
     </Button>
   )
 }
