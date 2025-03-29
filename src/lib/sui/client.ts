@@ -7,6 +7,7 @@ import {
   SuiObjectData 
 } from "./types";
 import { logger } from "../logger";
+import { SUI_PACKAGE_ID } from "./package";
 
 // ネットワーク設定
 export const networks = {
@@ -14,26 +15,14 @@ export const networks = {
   mainnet: { url: getFullnodeUrl("mainnet") },
 };
 
-// パッケージとオブジェクトのID設定
-// 注意: これらの値は環境変数またはデプロイされたコントラクトのアドレスで更新する必要があります
 export const CONTRACT_CONFIG = {
   get PACKAGE_ID(): string {
-    const packageId = process.env.NEXT_PUBLIC_SUI_PACKAGE_ID;
+    const packageId = SUI_PACKAGE_ID;
     if (!packageId) {
       console.warn("SUI_PACKAGE_ID is not set in environment variables");
       return "0x...."; // デフォルト値（実際には使用されない想定）
     }
     return packageId;
-  },
-  // Listingオブジェクトが作成された後のオブジェクトID
-  // 環境変数からリスティングIDを取得
-  get LISTING_ID(): string {
-    const listingId = process.env.NEXT_PUBLIC_SUI_LISTING_ID;
-    if (!listingId) {
-      console.warn("SUI_LISTING_ID is not set in environment variables");
-      return "0x...."; // デフォルト値（実際には使用されない想定）
-    }
-    return listingId;
   }
 };
 
