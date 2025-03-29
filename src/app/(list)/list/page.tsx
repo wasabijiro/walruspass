@@ -64,7 +64,7 @@ export default function VaultListPage() {
       // 本家のtusky.tsのcreatePrivateVault関数を使用
       const vaultResult = await tuskyCreateVault(client, vaultName, encryptionSetup ? undefined : vaultPassword)
       logger.info('[UI] Vault created with Tusky client', { result: vaultResult })
-      
+
       // Supabaseにボールトデータを保存
       await tuskyApi.createVault(
         vaultName,
@@ -72,7 +72,7 @@ export default function VaultListPage() {
         walletAddress,
         true // 暗号化有効
       )
-      
+
       setVaultName("")
       setSelectedVaultId(vaultResult.id) // 作成したボールトを選択
       logger.info('[UI] Vault metadata saved to Supabase', { id: vaultResult.id })

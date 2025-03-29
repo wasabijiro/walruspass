@@ -187,10 +187,11 @@ export default function Home() {
     try {
       setBuyLoading(true)
       
-      // まずアカウントの所持コインを取得
+      // より多くのコインを取得
       const { data: coins } = await suiClient.getCoins({
         owner: account.address,
-        coinType: "0x2::sui::SUI"
+        coinType: "0x2::sui::SUI",
+        limit: 10  // limitを増やす
       })
 
       if (!coins || coins.length === 0) {
@@ -198,10 +199,40 @@ export default function Home() {
         return
       }
 
-      // 購入用のトランザクションを作成
+      // 利用可能なコインの合計残高を計算
+      const totalBalance = coins.reduce((sum, coin) => sum + BigInt(coin.balance), 0n)
+      logger.info("Available balance", { totalBalance: totalBalance.toString() })
+
+      // NFTの価格を取得
+      const nftPrice = BigInt(file.nft?.price || 0)
+      const gasPrice = 100000000n // 0.1 SUI
+
+      // 必要な合計金額
+      const requiredTotal = nftPrice + gasPrice
+
+      if (totalBalance < requiredTotal) {
+        logger.error("Insufficient total balance", { 
+          required: requiredTotal.toString(),
+          available: totalBalance.toString() 
+        })
+        return
+      }
+
+      // 最も残高の多いコインを選択
+      const sortedCoins = [...coins].sort((a, b) => 
+        Number(BigInt(b.balance) - BigInt(a.balance))
+      )
+
+      // 支払い用のコインを選択（最も残高の多いもの）
+      const paymentCoin = sortedCoins[0]
+      // ガス用のコインを選択（2番目に残高の多いもの、または同じコインを使用）
+      const gasCoin = sortedCoins[1] || sortedCoins[0]
+
+      // トランザクションを作成
       const tx = createBuyNFTTransaction(
-        file.fileId, // NFTのID
-        coins[0].coinObjectId // 支払いに使用するコインのID
+        file.nft?.id || "",
+        paymentCoin.coinObjectId,
+        gasCoin.coinObjectId
       )
 
       // トランザクションを実行
@@ -213,7 +244,7 @@ export default function Home() {
           onSuccess: (result) => {
             logger.info("NFT purchased successfully", { 
               digest: result.digest,
-              fileId: file.fileId
+              fileId: file.nft?.id
             })
             
             // トランザクションの完了を待つ

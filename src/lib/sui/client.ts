@@ -46,7 +46,6 @@ export function createSuiClient(network: "testnet" | "mainnet" = "testnet"): Sui
 export function getBlobUrl(blobId: string): string {
   // ベースURLの設定
   const BLOB_API_BASE_URL = "https://aggregator.walrus-testnet.walrus.space/v1/blobs";
-  
   // URLの生成
   return `${BLOB_API_BASE_URL}/${blobId}`;
 }
@@ -59,17 +58,14 @@ export function createNFTTransaction(
   description: string
 ): Transaction {
   const tx = new Transaction();
-
   // ガス予算を明示的に設定する（最小値は1,000,000）
   tx.setGasBudget(100000000);
-
   // デバッグ用にログを追加
   logger.info(`createNFTTransaction: ${CONTRACT_CONFIG.PACKAGE_ID}::gatekeeper::create_nft`);
   logger.info(`price: ${price}`);
   logger.info(`blobId: ${blobId}`);
   logger.info(`name: ${name}`);
   logger.info(`description: ${description}`);
-
   tx.moveCall({
     target: `${CONTRACT_CONFIG.PACKAGE_ID}::gatekeeper::create_nft`,
     arguments: [
@@ -79,7 +75,6 @@ export function createNFTTransaction(
       tx.pure.string(description),
     ],
   });
-
   return tx;
 }
 
@@ -90,7 +85,8 @@ export function createBuyNFTTransaction(
   coinType: string = "0x2::sui::SUI"
 ): Transaction {
   const tx = new Transaction();
-  
+  // ガス予算を明示的に設定（createNFTTransactionと同様に）
+  tx.setGasBudget(100000000); // 0.1 SUI
   tx.moveCall({
     target: `${CONTRACT_CONFIG.PACKAGE_ID}::gatekeeper::buy_nft`,
     typeArguments: [coinType],
@@ -99,7 +95,6 @@ export function createBuyNFTTransaction(
       tx.object(coinObjectId),
     ],
   });
-  
   return tx;
 }
 
