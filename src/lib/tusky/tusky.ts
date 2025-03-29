@@ -172,6 +172,38 @@ export async function listFiles(client: TuskyClientType, options: {
 }
 
 /**
+ * Lists all files for the current user across all vaults
+ * @param client - Tusky client instance
+ * @returns All files for the user
+ */
+export async function listAllFiles(client: TuskyClientType) {
+  try {
+    logger.info('[Vault] Listing all files for user');
+    
+    // List all files using the client's listAll method
+    const files = await client.file.listAll();
+    
+    logger.info('[Vault] All files retrieved successfully', { 
+      count: files.items?.length || 0
+    });
+    
+    // サポートされている形式のレスポンスに対応
+    if (Array.isArray(files)) {
+      return { items: files, nextToken: null };
+    } else if (files.items && Array.isArray(files.items)) {
+      return { items: files.items, nextToken: files.nextToken };
+    }
+    
+    // 何も見つからなかった場合は空の結果を返す
+    logger.warn('[Vault] Could not determine files structure, returning empty array');
+    return { items: [], nextToken: null };
+  } catch (error) {
+    logger.error('[Vault] Failed to list all files', { error });
+    throw error;
+  }
+}
+
+/**
  * Retrieves file details
  * @param client - Tusky client instance
  * @param fileId - ID of the file

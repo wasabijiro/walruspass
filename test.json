@@ -1,0 +1,14 @@
+{
+  "items": [
+      {
+          "id": "4731d937-4c52-4731-855c-c306a4b9e9ac",
+          "vaultId": "a9205755-c451-4a7d-ac80-b18773858371",
+          "vaultName": "vault5",
+          "creatorAddress": "0x23d180e76b282f9c2b6216b0ecc69c5bfa344de9a17df5d9245721ac4b6f2a8c",
+          "encrypted": true,
+          "fileId": "4731d937-4c52-4731-855c-c306a4b9e9ac",
+          "uploadId": "3f056da3-063e-4013-b980-ba86ed5279b7"
+      }
+  ],
+  "count": 1
+}

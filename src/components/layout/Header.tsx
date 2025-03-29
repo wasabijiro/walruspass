@@ -44,7 +44,12 @@ export function Header() {
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
         {/* Left side - Logo or title */}
         <div>
-          {/* Add logo or title here if needed */}
+          <h1 
+            className="text-xl font-bold cursor-pointer" 
+            onClick={() => router.push('/')}
+          >
+            NFT GateKeeper
+          </h1>
         </div>
 
         {/* Right side - Auth buttons */}
