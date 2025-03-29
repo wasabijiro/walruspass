@@ -12,6 +12,9 @@ import { CreateNFTRequest } from '@/lib/api/types'
  * @body {Object}
  *   - nft_id {string} The NFT UUID - Required
  *   - file_id {string} The file UUID in our database - Required
+ *   - name {string} The NFT name - Required
+ *   - description {string} The NFT description - Required
+ *   - price {string} The NFT price - Required
  * @returns {Object} Created NFT information
  *   - success {boolean} Whether the creation was successful
  *   - nft {Object} The created NFT data
@@ -24,7 +27,7 @@ export async function POST(request: NextRequest) {
   try {
     // Parse request body
     const body = await request.json()
-    const { nft_id, file_id } = body
+    const { nft_id, file_id, name, description, price } = body
     
     // Validate required parameters
     if (!nft_id) {
@@ -43,7 +46,31 @@ export async function POST(request: NextRequest) {
       )
     }
     
-    logger.info('Processing NFT creation request', { nft_id, file_id })
+    if (!name) {
+      logger.warn('Missing name in request')
+      return NextResponse.json(
+        { error: 'name is required' },
+        { status: 400 }
+      )
+    }
+    
+    if (!description) {
+      logger.warn('Missing description in request')
+      return NextResponse.json(
+        { error: 'description is required' },
+        { status: 400 }
+      )
+    }
+    
+    if (!price) {
+      logger.warn('Missing price in request')
+      return NextResponse.json(
+        { error: 'price is required' },
+        { status: 400 }
+      )
+    }
+    
+    logger.info('Processing NFT creation request', { nft_id, file_id, name })
     
     // Create repository instance
     const repository = new SupabaseRepository(supabase)
@@ -51,7 +78,10 @@ export async function POST(request: NextRequest) {
     // Create NFT request object
     const nftRequest: CreateNFTRequest = {
       nft_id,
-      file_id
+      file_id,
+      name,
+      description,
+      price
     }
     
     // Create NFT metadata

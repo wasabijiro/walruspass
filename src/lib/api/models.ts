@@ -23,6 +23,9 @@ export interface TuskyFileModel {
 export interface NFTModel {
   id: string
   file_id: string
+  name: string
+  description: string
+  price: string
   created_at: string
   updated_at: string
 }

@@ -20,6 +20,9 @@ CREATE TABLE public.tusky_files (
 CREATE TABLE public.nfts (
   id TEXT PRIMARY KEY,  -- SuiのObjectIDを直接IDとして使用
   file_id UUID NOT NULL REFERENCES public.tusky_files(id) ON DELETE CASCADE,
+  name TEXT NOT NULL,
+  description TEXT NOT NULL,
+  price TEXT NOT NULL,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT now() NOT NULL,
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT now() NOT NULL
 );

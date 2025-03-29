@@ -389,9 +389,9 @@ export class SupabaseRepository implements DbRepository {
 
   async createNFT(request: CreateNFTRequest): Promise<Result<CreateNFTResponse, ApiError>> {
     try {
-      const { nft_id, file_id } = request
+      const { nft_id, file_id, name, description, price } = request
 
-      logger.info('Creating NFT record in database', { nft_id, file_id })
+      logger.info('Creating NFT record in database', { nft_id, file_id, name })
 
       // Check if file exists
       const { error: fileError } = await this.client
@@ -409,8 +409,11 @@ export class SupabaseRepository implements DbRepository {
       const { data: nftData, error: nftError } = await this.client
         .from('nfts')
         .insert({
-          id: nft_id,  // nft_idを指定
-          file_id
+          id: nft_id,
+          file_id,
+          name,
+          description,
+          price
         })
         .select()
         .single()
@@ -420,13 +423,16 @@ export class SupabaseRepository implements DbRepository {
         return err(createApiError('database', 'Failed to save NFT metadata', nftError))
       }
       
-      logger.info('NFT metadata saved successfully', { id: nftData.id, file_id })
+      logger.info('NFT metadata saved successfully', { id: nftData.id, file_id, name })
       
       return ok({
         success: true,
         nft: {
           id: nftData.id,
           fileId: nftData.file_id,
+          name: nftData.name,
+          description: nftData.description,
+          price: nftData.price,
           createdAt: nftData.created_at,
           updatedAt: nftData.updated_at
         }

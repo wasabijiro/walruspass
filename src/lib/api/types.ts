@@ -59,6 +59,9 @@ export interface ListFilesResponse {
 export interface CreateNFTRequest {
   nft_id: string
   file_id: string
+  name: string
+  description: string
+  price: string
 }
 
 export interface CreateNFTResponse {

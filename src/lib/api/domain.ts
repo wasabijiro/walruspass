@@ -61,6 +61,9 @@ export type NFTId = string
 export interface NFT {
   id: NFTId
   fileId: TuskyFileId
+  name: string
+  description: string
+  price: string
   createdAt: string
   updatedAt: string
 }
@@ -69,6 +72,9 @@ export function nftModelToDomain(model: NFTModel): NFT {
   return {
     id: model.id,
     fileId: model.file_id,
+    name: model.name,
+    description: model.description,
+    price: model.price,
     createdAt: model.created_at,
     updatedAt: model.updated_at
   }

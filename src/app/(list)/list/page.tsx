@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { setupEncryption, createPrivateVault as tuskyCreateVault, uploadFileToVault as tuskyUploadFile } from "@/lib/tusky/tusky"
 import { tuskyApi } from "@/lib/api/client/tusky"
 import { useTusky } from "@/hooks/useTusky"
@@ -203,7 +203,7 @@ export default function VaultListPage() {
                 
                 // createメソッドを使用してnftApiを呼び出す
                 try {
-                  await nftApi.create(nftId, uploadId)
+                  await nftApi.create(nftId, uploadId, nftName, nftDescription, nftPrice)
                   logger.info('[UI] NFT metadata saved to database', { nftId, uploadId })
                 } catch (saveError) {
                   // メタデータ保存に失敗してもトランザクションは成功しているので続行
