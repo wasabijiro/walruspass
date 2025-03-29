@@ -275,7 +275,7 @@ export class SupabaseRepository implements DbRepository {
         .select(`
           *,
           nfts (
-            id
+            *
           )
         `, { count: 'exact' })
         .in('vault_id', vaultIds)
@@ -301,8 +301,11 @@ export class SupabaseRepository implements DbRepository {
           nft: {
             id: fileModel.nfts[0].id,
             fileId: file.id,
-            createdAt: fileModel.created_at,
-            updatedAt: fileModel.updated_at
+            name: fileModel.nfts[0].name,
+            description: fileModel.nfts[0].description,
+            price: fileModel.nfts[0].price,
+            createdAt: fileModel.nfts[0].created_at,
+            updatedAt: fileModel.nfts[0].updated_at
           }
         }
       })
