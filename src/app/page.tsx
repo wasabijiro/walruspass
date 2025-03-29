@@ -11,6 +11,10 @@ import { Button } from "@/components/ui/button"
 import { useRouter } from "next/navigation"
 import { Loader2, X } from "lucide-react"
 import { getFile, listFiles } from "@/lib/tusky/tusky"
+import { downloadFile } from "@/lib/tusky/tusky"
+import { Input } from "@/components/ui/input"
+import { createBuyNFTTransaction } from "@/lib/sui/client"
+import { useSignAndExecuteTransaction, useSuiClient } from "@mysten/dapp-kit"
 
 // ファイル詳細情報の型定義
 interface FileDetails {
@@ -25,10 +29,12 @@ interface FileDetails {
   [key: string]: unknown; // その他の可能性のあるプロパティ
 }
 
+// ファイルIDを定数として定義
+const TARGET_FILE_ID = '591a5637-f5d4-4c75-937e-a0eac50fb73a'
+
 export default function Home() {
   const [files, setFiles] = useState<TuskyFile[]>([])
 
-  
   const [loading, setLoading] = useState(true)
   const account = useCurrentAccount()
   const { isSignedIn, client } = useTusky()
@@ -42,6 +48,11 @@ export default function Home() {
   } | null>(null)
   const [downloadLoading, setDownloadLoading] = useState<string | null>(null)
   const [modalOpen, setModalOpen] = useState(false)
+  const [downloadPassword, setDownloadPassword] = useState("")
+  const [showPasswordModal, setShowPasswordModal] = useState(false)
+  const [buyLoading, setBuyLoading] = useState(false)
+  const suiClient = useSuiClient()
+  const { mutate: signAndExecuteTransaction } = useSignAndExecuteTransaction()
 
   useEffect(() => {
     async function fetchFiles() {
@@ -118,104 +129,108 @@ export default function Home() {
     fetchFiles()
   }, [account, client])
 
-  async function handleViewFile(file: TuskyFile) {
-    if (!client || (!file.fileId && !file.uploadId)) {
-      logger.error("Cannot view file - client not available or both fileId and uploadId missing")
+  async function handleDownloadWithPassword(file: TuskyFile) {
+    if (!client) {
+      logger.error("Cannot download file - client not available")
       return
     }
 
     try {
       setDownloadLoading(file.id)
-      setSelectedFile({
-        fileId: file.fileId,
-        name: file.fileId, // ファイル名がない場合はfileIdを使用
-        uploadId: file.uploadId // uploadIdも保存
-      })
       
-      // ファイル詳細情報を取得
-      try {
-        let fileDetails;
-        let useMethod = '';
-        
-        // まずfileIdを試す
-        if (file.fileId) {
-          try {
-            logger.info("[Attempt] Getting file details using fileId", { fileId: file.fileId })
-            fileDetails = await getFile(client, file.fileId)
-            useMethod = 'fileId';
-          } catch (error) {
-            logger.warn("Failed to get file details using fileId", { error, fileId: file.fileId })
-            // fileIdで失敗した場合、uploadIdを試す
-          }
-        }
-        
-        // fileIdが失敗またはない場合、uploadIdを試す
-        if (!fileDetails && file.uploadId) {
-          try {
-            logger.info("[Attempt] Getting file details using uploadId via listFiles", { uploadId: file.uploadId })
-            
-            // listFiles関数を使ってuploadIdでフィルタリング
-            const result = await listFiles(client, { 
-              uploadId: file.uploadId,
-              limit: 1 
-            })
-
-            logger.info("[Result] File details retrieved using uploadId via listFiles", { result })
-            
-            if (result.items && result.items.length > 0) {
-              fileDetails = result.items[0]
-              useMethod = 'uploadId via listFiles';
-            }
-          } catch (listError) {
-            logger.warn("Failed to get file details using uploadId via listFiles", { error: listError, uploadId: file.uploadId })
-          }
-        }
-        
-        if (fileDetails) {
-          logger.info("File details retrieved successfully using " + useMethod, { fileDetails })
-          
-          setSelectedFile(prev => prev ? {
-            ...prev,
-            details: fileDetails,
-            name: fileDetails.name || file.fileId // 名前があれば更新
-          } : null)
-        } else {
-          // 両方の方法で失敗した場合
-          logger.error("Failed to retrieve file details using both fileId and uploadId")
-          throw new Error("Could not retrieve file details with available IDs")
-        }
-      } catch (error) {
-        logger.error("Error fetching file details", { 
-          error, 
-          fileId: file.fileId, 
-          uploadId: file.uploadId 
-        })
-        
-        // エラーがあっても最低限の情報は表示
-        setSelectedFile(prev => prev ? {
-          ...prev,
-          details: {
-            error: "詳細情報の取得に失敗しました"
-          }
-        } : null)
+      // パスワードで暗号化を設定
+      await client.addEncrypter({ password: downloadPassword })
+      
+      // ファイルをダウンロード
+      const fileData = await downloadFile(client, TARGET_FILE_ID)
+      
+      if (fileData instanceof Blob) {
+        const url = window.URL.createObjectURL(fileData)
+        const a = document.createElement('a')
+        a.href = url
+        a.download = file.name || 'downloaded-file'
+        document.body.appendChild(a)
+        a.click()
+        window.URL.revokeObjectURL(url)
+        document.body.removeChild(a)
       }
-      
-      setModalOpen(true)
+
+      // 成功したらモーダルを閉じてパスワードをリセット
+      setShowPasswordModal(false)
+      setDownloadPassword("")
+      logger.info("File downloaded successfully", { fileId: TARGET_FILE_ID })
     } catch (error) {
-      logger.error("Failed to process file view request", { 
-        error, 
-        fileId: file.fileId, 
-        uploadId: file.uploadId 
-      })
+      logger.error("Failed to download file", { error, fileId: TARGET_FILE_ID })
     } finally {
       setDownloadLoading(null)
     }
+  }
+
+  async function handleViewFile(file: TuskyFile) {
+    setShowPasswordModal(true)
+    setSelectedFile(file)
   }
 
   // モーダルを閉じる
   const closeModal = () => {
     setModalOpen(false)
     setSelectedFile(null)
+  }
+
+  // NFT購入処理を追加
+  const handleBuyNFT = async (file: TuskyFile) => {
+    if (!account || !client) {
+      logger.error("Cannot buy NFT - client or account not available")
+      return
+    }
+
+    try {
+      setBuyLoading(true)
+      
+      // まずアカウントの所持コインを取得
+      const { data: coins } = await suiClient.getCoins({
+        owner: account.address,
+        coinType: "0x2::sui::SUI"
+      })
+
+      if (!coins || coins.length === 0) {
+        logger.error("No SUI coins available")
+        return
+      }
+
+      // 購入用のトランザクションを作成
+      const tx = createBuyNFTTransaction(
+        file.fileId, // NFTのID
+        coins[0].coinObjectId // 支払いに使用するコインのID
+      )
+
+      // トランザクションを実行
+      signAndExecuteTransaction(
+        {
+          transaction: tx,
+        },
+        {
+          onSuccess: (result) => {
+            logger.info("NFT purchased successfully", { 
+              digest: result.digest,
+              fileId: file.fileId
+            })
+            
+            // トランザクションの完了を待つ
+            suiClient.waitForTransaction({ digest: result.digest }).then(() => {
+              setBuyLoading(false)
+            })
+          },
+          onError: (error) => {
+            logger.error("Failed to purchase NFT", { error })
+            setBuyLoading(false)
+          }
+        }
+      )
+    } catch (error) {
+      logger.error("Error in buy NFT process", { error })
+      setBuyLoading(false)
+    }
   }
 
   return (
@@ -263,11 +278,11 @@ export default function Home() {
                     ステータス: {file.encrypted ? "暗号化済み" : "標準"}
                   </p>
                 </CardContent>
-                <CardFooter>
+                <CardFooter className="flex gap-2">
                   <Button 
                     onClick={() => handleViewFile(file)}
                     disabled={!client || !isSignedIn || downloadLoading === file.id}
-                    className="w-full"
+                    className="flex-1"
                     variant="outline"
                   >
                     {downloadLoading === file.id ? (
@@ -277,6 +292,21 @@ export default function Home() {
                       </>
                     ) : (
                       "ファイル情報を表示"
+                    )}
+                  </Button>
+                  <Button
+                    onClick={() => handleBuyNFT(file)}
+                    disabled={!client || !isSignedIn || buyLoading}
+                    className="flex-1"
+                    variant="default"
+                  >
+                    {buyLoading ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        購入処理中...
+                      </>
+                    ) : (
+                      "NFTを購入"
                     )}
                   </Button>
                 </CardFooter>
@@ -390,6 +420,46 @@ export default function Home() {
                   </Button>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* パスワード入力モーダル */}
+      {showPasswordModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-96">
+            <h3 className="text-lg font-bold mb-4">パスワードを入力するのだ</h3>
+            <Input
+              type="password"
+              value={downloadPassword}
+              onChange={(e) => setDownloadPassword(e.target.value)}
+              placeholder="暗号化パスワード"
+              className="mb-4"
+            />
+            <div className="flex justify-end gap-2">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setShowPasswordModal(false)
+                  setDownloadPassword("")
+                }}
+              >
+                キャンセル
+              </Button>
+              <Button
+                onClick={() => selectedFile && handleDownloadWithPassword(selectedFile)}
+                disabled={!downloadPassword.trim() || downloadLoading === selectedFile?.id}
+              >
+                {downloadLoading === selectedFile?.id ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    ダウンロード中...
+                  </>
+                ) : (
+                  "ダウンロード"
+                )}
+              </Button>
             </div>
           </div>
         </div>

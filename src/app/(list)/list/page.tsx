@@ -8,8 +8,10 @@ import { setupEncryption, createPrivateVault as tuskyCreateVault, uploadFileToVa
 import { tuskyApi } from "@/lib/api/client/tusky"
 import { useTusky } from "@/hooks/useTusky"
 import { logger } from "@/lib/logger"
-import { Loader2, Lock, Upload, Key } from "lucide-react"
-import { useCurrentAccount } from "@mysten/dapp-kit"
+import { Loader2, Lock, Upload, Key, ListOrdered } from "lucide-react"
+import { useCurrentAccount, useSignAndExecuteTransaction, useSuiClient } from "@mysten/dapp-kit"
+import { createNFTTransaction, getNFTObjectIdFromTransaction } from "@/lib/sui/client"
+import { nftApi } from "@/lib/api/client/nft"
 
 export default function VaultListPage() {
   const [vaultName, setVaultName] = useState("")
@@ -19,8 +21,15 @@ export default function VaultListPage() {
   const [loading, setLoading] = useState(false)
   const [uploadLoading, setUploadLoading] = useState(false)
   const [encryptionSetup, setEncryptionSetup] = useState(false)
+  const [listingLoading, setListingLoading] = useState(false)
+  const [uploadId, setUploadId] = useState<string | null>(null)
+  const [nftPrice, setNftPrice] = useState<string>("1000000000") // 1 SUI = 1,000,000,000 units
+  const [transactionDigest, setTransactionDigest] = useState<string | null>(null)
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const { client, isSignedIn } = useTusky()
   const account = useCurrentAccount()
+  const suiClient = useSuiClient()
+  const { mutate: signAndExecuteTransaction } = useSignAndExecuteTransaction()
 
   // 暗号化を初期設定
   const handleSetupEncryption = async () => {
@@ -85,14 +94,21 @@ export default function VaultListPage() {
       const walletAddress = account.address
       
       // 本家のtusky.tsのuploadFileToVault関数を使用
-      const uploadId = await tuskyUploadFile(client, selectedVaultId, file)
-      logger.info('[UI] File uploaded with Tusky client', { uploadId })
+      const uploadedId = await tuskyUploadFile(client, selectedVaultId, file)
+      logger.info('[UI] File uploaded with Tusky client', { uploadId: uploadedId })
+      
+      // アップロードIDを保存
+      setUploadId(uploadedId)
+      
+      // blob_idを生成（この例ではuploadIdを使用）
+      const blobId = uploadedId  // または適切なblobId生成ロジックを使用
       
       // Supabaseにファイルメタデータを保存
       await tuskyApi.saveFile(
-        file.name, // fileIdの代わりにファイル名を使用（適宜調整）
-        uploadId, // Tuskyから返されたアップロードID
-        file.name,
+        file.name,     // fileId
+        uploadedId,    // uploadId
+        blobId,        // blob_id - 明示的に指定
+        file.name,     // name
         selectedVaultId,
         walletAddress,
         file.type,
@@ -111,6 +127,92 @@ export default function VaultListPage() {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       setFile(e.target.files[0])
+    }
+  }
+
+  // NFTをリストする処理
+  const handleListNFT = async () => {
+    if (!uploadId || !account) {
+      logger.warn('[UI] Cannot list NFT: Missing upload ID or account', { uploadId, account })
+      return
+    }
+
+    try {
+      setListingLoading(true)
+      setErrorMessage(null)
+      setTransactionDigest(null)
+      logger.info('[UI] Attempting to list NFT', { uploadId })
+      
+      // NFT情報の準備
+      const price = BigInt(nftPrice)
+      const blobId = uploadId
+      const name = file ? file.name : "Unknown File"
+      const description = `File uploaded through vault: ${selectedVaultId}`
+      
+      // createNFTTransaction関数を使用して、トランザクションを作成
+      const tx = createNFTTransaction(
+        price,
+        blobId,
+        name,
+        description
+      )
+      
+      // ウォレットを使ってトランザクションに署名して実行
+      signAndExecuteTransaction(
+        {
+          transaction: tx,
+        },
+        {
+          onSuccess: async (result) => {
+            logger.info('[UI] NFT listed successfully', { 
+              digest: result.digest,
+              blobId,
+              name
+            })
+            
+            // トランザクションの結果を待ってから最新の状態を取得
+            const txResult = await suiClient.waitForTransaction({ digest: result.digest })
+            logger.info('[UI] Transaction result', { txResult })
+            
+            // 生成されたNFTのObjectIDを取得
+            const createdObjectId = await getNFTObjectIdFromTransaction(suiClient, result.digest)
+            if (!createdObjectId) {
+              logger.error('[UI] Failed to get NFT object ID', { digest: result.digest })
+              setErrorMessage("NFTの作成は成功しましたが、ObjectIDの取得に失敗しました")
+              setListingLoading(false)
+              return
+            }
+
+            try {
+              // NFTデータをデータベースに保存（ObjectIDを使用）
+              await nftApi.create(
+                createdObjectId, // NFTのObjectIDを使用
+                uploadId        // アップロードされたファイルのID
+              )
+              logger.info('[UI] NFT data saved to database', { 
+                nft_id: createdObjectId,
+                file_id: uploadId
+              })
+            } catch (error) {
+              logger.error('[UI] Error saving NFT data to database', { error })
+              setErrorMessage("NFTの作成は成功しましたが、データベースへの保存に失敗しました")
+            }
+
+            // トランザクションダイジェストを保存（UI表示用）
+            setTransactionDigest(result.digest)
+            setListingLoading(false)
+          },
+          onError: (error) => {
+            logger.error('[UI] Error listing NFT', { error })
+            setErrorMessage(error instanceof Error ? error.message : "トランザクションの実行に失敗しました")
+            setListingLoading(false)
+          }
+        }
+      )
+    } catch (error) {
+      logger.error('[UI] Error preparing transaction', { error })
+      setErrorMessage(error instanceof Error ? error.message : "不明なエラーが発生しました")
+      setListingLoading(false)
     }
   }
 
@@ -251,6 +353,76 @@ export default function VaultListPage() {
                     <>
                       <Upload className="mr-2 h-4 w-4" />
                       アップロード
+                    </>
+                  )}
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* NFTリストセクション */}
+        {uploadId && (
+          <Card>
+            <CardHeader>
+              <CardTitle>NFTをリスト</CardTitle>
+              <CardDescription>
+                アップロードしたファイルをNFTとしてブロックチェーンに登録します。
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="flex flex-col space-y-4">
+                <div>
+                  <label className="block text-sm font-medium mb-1">NFT価格 (SUI単位)</label>
+                  <Input
+                    type="number"
+                    value={nftPrice}
+                    onChange={(e) => setNftPrice(e.target.value)}
+                    placeholder="NFT価格（SUI）"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">1 SUI = 1,000,000,000 units</p>
+                </div>
+                
+                {transactionDigest && (
+                  <div className="p-3 bg-green-50 border border-green-200 rounded-md">
+                    <p className="text-green-700 font-medium">NFTのリストに成功しました！</p>
+                    <p className="text-sm mt-1">トランザクションハッシュ:</p>
+                    <p className="text-xs font-mono bg-white p-2 rounded border mt-1 break-all">
+                      {transactionDigest}
+                    </p>
+                    <p className="text-xs mt-2">
+                      <a 
+                        href={`https://explorer.sui.io/txblock/${transactionDigest}?network=testnet`} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="text-blue-600 hover:underline"
+                      >
+                        Suiエクスプローラーで確認する →
+                      </a>
+                    </p>
+                  </div>
+                )}
+                
+                {errorMessage && (
+                  <div className="p-3 bg-red-50 border border-red-200 rounded-md">
+                    <p className="text-red-700">エラー: {errorMessage}</p>
+                  </div>
+                )}
+                
+                <Button 
+                  onClick={handleListNFT} 
+                  disabled={listingLoading || !uploadId}
+                  className="self-end"
+                >
+                  {listingLoading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      リスト中...
+                    </>
+                  ) : (
+                    <>
+                      <ListOrdered className="mr-2 h-4 w-4" />
+                      NFTをリスト
                     </>
                   )}
                 </Button>

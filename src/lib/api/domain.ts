@@ -1,4 +1,4 @@
-import { ProfileModel, TuskyFileModel, TuskyVaultModel } from "./models"
+import { NFTModel, ProfileModel, TuskyFileModel, TuskyVaultModel } from "./models"
 
 export type ProfileId = string
 
@@ -43,7 +43,6 @@ export interface TuskyFile {
   creatorAddress: string
   encrypted: boolean
   fileId: string
-  uploadId: string
 }
 
 export function tuskyFileModelToDomain(model: TuskyFileModel, vault: TuskyVault): TuskyFile {
@@ -54,6 +53,23 @@ export function tuskyFileModelToDomain(model: TuskyFileModel, vault: TuskyVault)
     creatorAddress: vault.creatorAddress,
     encrypted: vault.encrypted,
     fileId: model.id,
-    uploadId: model.upload_id
+  }
+}
+
+export type NFTId = string
+
+export interface NFT {
+  id: NFTId
+  fileId: TuskyFileId
+  createdAt: string
+  updatedAt: string
+}
+
+export function nftModelToDomain(model: NFTModel): NFT {
+  return {
+    id: model.id,
+    fileId: model.file_id,
+    createdAt: model.created_at,
+    updatedAt: model.updated_at
   }
 }

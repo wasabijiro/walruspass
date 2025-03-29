@@ -14,7 +14,9 @@ import {
   ListFilesRequest,
   ListFilesResponse,
   CreateFileRequest,
-  CreateFileResponse
+  CreateFileResponse,
+  CreateNFTRequest,
+  CreateNFTResponse
 } from './types'
 import { 
   profileModelToDomain, 
@@ -267,10 +269,15 @@ export class SupabaseRepository implements DbRepository {
       // Now fetch files using the vault IDs
       const vaultIds = vaults.map(v => v.id)
       
-      // Start building the query
+      // Start building the query with files and their associated NFTs
       let filesQuery = this.client
         .from('tusky_files')
-        .select('*', { count: 'exact' })
+        .select(`
+          *,
+          nfts (
+            id
+          )
+        `, { count: 'exact' })
         .in('vault_id', vaultIds)
       
       // Apply pagination
@@ -284,10 +291,20 @@ export class SupabaseRepository implements DbRepository {
         return err(createApiError('database', 'Failed to fetch files', filesError))
       }
       
-      // Map files to domain models
+      // Map files to domain models with NFT information
       const items = filesData.map(fileModel => {
         const vault = vaults.find(v => v.id === fileModel.vault_id)!
-        return tuskyFileModelToDomain(fileModel as TuskyFileModel, vault)
+        const file = tuskyFileModelToDomain(fileModel as TuskyFileModel, vault)
+        
+        return {
+          ...file,
+          nft: {
+            id: fileModel.nfts[0].id,
+            fileId: file.id,
+            createdAt: fileModel.created_at,
+            updatedAt: fileModel.updated_at
+          }
+        }
       })
       
       logger.info('Files fetched successfully', { 
@@ -314,12 +331,14 @@ export class SupabaseRepository implements DbRepository {
     try {
       const { 
         upload_id, 
+        blob_id,
         vault_id, 
         wallet_address 
       } = request
       
       logger.info('Creating file record in database', { 
         upload_id,
+        blob_id,
         vault_id,
         wallet_address 
       })
@@ -339,12 +358,12 @@ export class SupabaseRepository implements DbRepository {
       
       const vault = tuskyVaultModelToDomain(vaultData as TuskyVaultModel)
       
-      // Save file metadata to database
+      // Save file metadata to database using upload_id as the file id
       const { data: fileData, error: fileError } = await this.client
         .from('tusky_files')
         .insert({
-          vault_id,
-          upload_id
+          id: upload_id,  // upload_idをファイルのIDとして使用
+          vault_id
         })
         .select()
         .single()
@@ -365,6 +384,56 @@ export class SupabaseRepository implements DbRepository {
     } catch (error) {
       logger.error('Unexpected error in file creation', { error })
       return err(createApiError('unknown', 'An unexpected error occurred while creating file', error))
+    }
+  }
+
+  async createNFT(request: CreateNFTRequest): Promise<Result<CreateNFTResponse, ApiError>> {
+    try {
+      const { nft_id, file_id } = request
+
+      logger.info('Creating NFT record in database', { nft_id, file_id })
+
+      // Check if file exists
+      const { error: fileError } = await this.client
+        .from('tusky_files')
+        .select('*')
+        .eq('id', file_id)
+        .single()
+      
+      if (fileError) {
+        logger.warn('File not found', { file_id, error: fileError })
+        return err(createApiError('not_found', 'File not found', fileError))
+      }
+      
+      // Save NFT metadata to database
+      const { data: nftData, error: nftError } = await this.client
+        .from('nfts')
+        .insert({
+          id: nft_id,  // nft_idを指定
+          file_id
+        })
+        .select()
+        .single()
+      
+      if (nftError) {
+        logger.error('Error saving NFT metadata', { error: nftError })
+        return err(createApiError('database', 'Failed to save NFT metadata', nftError))
+      }
+      
+      logger.info('NFT metadata saved successfully', { id: nftData.id, file_id })
+      
+      return ok({
+        success: true,
+        nft: {
+          id: nftData.id,
+          fileId: nftData.file_id,
+          createdAt: nftData.created_at,
+          updatedAt: nftData.updated_at
+        }
+      })
+    } catch (error) {
+      logger.error('Unexpected error in NFT creation', { error })
+      return err(createApiError('unknown', 'An unexpected error occurred while creating NFT', error))
     }
   }
 }

@@ -12,6 +12,7 @@ import { CreateFileRequest } from '@/lib/api/types'
  * @body {Object}
  *   - file_id {string} The file ID in Tusky (used only for display, not stored in DB) - Required
  *   - upload_id {string} The upload ID from Tusky - Required
+ *   - blob_id {string} The blob ID from Tusky - Required
  *   - name {string} File name (used only for display, not stored in DB) - Required
  *   - mime_type {string} File MIME type - Optional
  *   - size {number} File size in bytes - Optional
@@ -31,7 +32,8 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
     const { 
       file_id, 
-      upload_id, 
+      upload_id,
+      blob_id,
       name, 
       vault_id, 
       wallet_address 
@@ -78,6 +80,14 @@ export async function POST(request: NextRequest) {
       )
     }
     
+    if (!blob_id) {
+      logger.warn('Missing blob_id in request')
+      return NextResponse.json(
+        { error: 'blob_id is required' },
+        { status: 400 }
+      )
+    }
+    
     logger.info('Processing file metadata storage', { 
       file_id,
       name, 
@@ -92,6 +102,7 @@ export async function POST(request: NextRequest) {
     const fileRequest: CreateFileRequest = {
       file_id,
       upload_id,
+      blob_id,
       name,
       vault_id,
       wallet_address

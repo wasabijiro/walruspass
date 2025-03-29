@@ -1,4 +1,4 @@
-import { Profile, TuskyFile, TuskyVault } from "./domain"
+import { NFT, Profile, TuskyFile, TuskyVault } from "./domain"
 
 // `GET /api/profile`
 export interface GetProfileByIdRequest {
@@ -32,6 +32,7 @@ export interface CreateVaultResponse {
 export interface CreateFileRequest {
   file_id: string  // 内部使用のみ
   upload_id: string
+  blob_id: string  // Add this line
   name: string     // 内部使用のみ
   vault_id: string
   wallet_address: string
@@ -50,6 +51,17 @@ export interface ListFilesRequest {
 }
 
 export interface ListFilesResponse {
-  items: TuskyFile[]
+  items: (TuskyFile & { nft?: NFT })[]  // NFT情報をオプショナルで含める
   count: number
+}
+
+// `POST /api/nft/insert`
+export interface CreateNFTRequest {
+  nft_id: string
+  file_id: string
+}
+
+export interface CreateNFTResponse {
+  success: boolean
+  nft: NFT
 }

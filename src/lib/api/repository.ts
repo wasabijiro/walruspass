@@ -10,7 +10,9 @@ import {
   ListFilesRequest,
   ListFilesResponse,
   CreateFileRequest,
-  CreateFileResponse
+  CreateFileResponse,
+  CreateNFTRequest,
+  CreateNFTResponse
 } from './types'
 
 // Repository interface
@@ -20,4 +22,5 @@ export interface DbRepository {
   createVault(request: CreateVaultRequest): Promise<Result<CreateVaultResponse, ApiError>>
   listFiles(request: ListFilesRequest): Promise<Result<ListFilesResponse, ApiError>>
   createFile(request: CreateFileRequest): Promise<Result<CreateFileResponse, ApiError>>
+  createNFT(request: CreateNFTRequest): Promise<Result<CreateNFTResponse, ApiError>>
 }

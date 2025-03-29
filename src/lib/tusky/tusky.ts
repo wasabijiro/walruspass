@@ -234,12 +234,12 @@ export async function getFile(client: TuskyClientType, fileId: string) {
 export async function downloadFile(client: TuskyClientType, fileId: string) {
   try {
     logger.info('[Vault] Downloading file', { fileId });
-    
+
     // Download the file
     const fileData = await client.file.download(fileId);
-    
+
     logger.info('[Vault] File downloaded successfully', { fileId });
-    
+
     return fileData;
   } catch (error) {
     logger.error('[Vault] Failed to download file', { error, fileId });

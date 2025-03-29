@@ -37,6 +37,7 @@ export const tuskyApi = {
   async saveFile(
     file_id: string,
     upload_id: string,
+    blob_id: string,
     name: string,
     vault_id: string,
     wallet_address: string,
@@ -52,6 +53,7 @@ export const tuskyApi = {
         body: JSON.stringify({
           file_id,
           upload_id,
+          blob_id,
           name,
           vault_id,
           wallet_address,
