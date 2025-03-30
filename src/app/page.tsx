@@ -69,7 +69,10 @@ export default function Home() {
         logger.info("Fetching NFT data from Supabase directly")
         
         // ウォレット接続なしでも直接APIからデータを取得
-        const params = {
+        const params: {
+          limit: number;
+          wallet_address?: string;
+        } = {
           limit: 6 // より良いグリッドレイアウトのために6件表示
         }
         
@@ -245,46 +248,72 @@ export default function Home() {
     try {
       setBuyLoading(true)
       
-      // より多くのコインを取得
+      // SUIの価格を整数に変換（1 SUI = 1_000_000_000 MIST）
+      const nftPrice = BigInt(
+        Math.floor(
+          (file.nft?.price ? parseFloat(file.nft.price) : 0.1) * 1_000_000_000
+        )
+      )
+      const gasPrice = BigInt(100_000_000) // 0.1 SUI in MIST
+
+      // コインを取得
       const { data: coins } = await suiClient.getCoins({
         owner: account.address,
         coinType: "0x2::sui::SUI",
-        limit: 10  // limitを増やす
+        limit: 50
       })
 
       if (!coins || coins.length === 0) {
         logger.error("No SUI coins available")
+        alert("You don't have any SUI coins in your wallet.")
         return
       }
 
-      // 利用可能なコインの合計残高を計算
-      const totalBalance = coins.reduce((sum, coin) => sum + BigInt(coin.balance), 0n)
-      logger.info("Available balance", { totalBalance: totalBalance.toString() })
-
-      // NFTの価格を取得
-      const nftPrice = BigInt(file.nft?.price || 0)
-      const gasPrice = 100000000n // 0.1 SUI
-
-      // 必要な合計金額
-      const requiredTotal = nftPrice + gasPrice
-
-      if (totalBalance < requiredTotal) {
-        logger.error("Insufficient total balance", { 
-          required: requiredTotal.toString(),
-          available: totalBalance.toString() 
-        })
-        return
-      }
-
-      // 最も残高の多いコインを選択
+      // コインを残高の大きい順にソート
       const sortedCoins = [...coins].sort((a, b) => 
         Number(BigInt(b.balance) - BigInt(a.balance))
       )
 
-      // 支払い用のコインを選択（最も残高の多いもの）
-      const paymentCoin = sortedCoins[0]
-      // ガス用のコインを選択（2番目に残高の多いもの、または同じコインを使用）
-      const gasCoin = sortedCoins[1] || sortedCoins[0]
+      // 必要な合計金額を計算
+      const requiredTotal = nftPrice + gasPrice
+
+      // 利用可能な合計残高を確認
+      const totalBalance = sortedCoins.reduce((sum, coin) => sum + BigInt(coin.balance), 0n)
+      if (totalBalance < requiredTotal) {
+        const requiredSUI = Number(requiredTotal) / 1_000_000_000
+        const currentSUI = Number(totalBalance) / 1_000_000_000
+        alert(
+          `Insufficient balance.\n\n` +
+          `Required: ${requiredSUI.toFixed(2)} SUI\n` +
+          `Available: ${currentSUI.toFixed(2)} SUI\n\n` +
+          `Please add more SUI to your wallet.`
+        )
+        return
+      }
+
+      // 最も残高の多いコインを選択
+      const primaryCoin = sortedCoins[0]
+
+      if (!primaryCoin || BigInt(primaryCoin.balance) < requiredTotal) {
+        logger.error("No single coin has enough balance for the transaction")
+        alert(
+          "Insufficient balance in a single coin.\n\n" +
+          "Please merge your SUI coins in your wallet and try again."
+        )
+        return
+      }
+
+      // 同じコインをガスと支払いの両方に使用
+      const paymentCoin = primaryCoin
+      const gasCoin = primaryCoin
+
+      logger.info("Selected coin for both payment and gas", {
+        coinId: primaryCoin.coinObjectId,
+        balance: primaryCoin.balance,
+        nftPrice: nftPrice.toString(),
+        gasPrice: gasPrice.toString(),
+        requiredTotal: requiredTotal.toString()
+      })
 
       // トランザクションを作成
       const tx = createBuyNFTTransaction(
@@ -489,8 +518,7 @@ export default function Home() {
                       ) : (
                         // 所有者でない場合はBuyボタンを表示
                         <Button 
-                          // onClick={() => handleBuyNFT(file)}  // 本番環境では実際の購入処理 (コメントアウト)
-                          onClick={() => _handleBuyNFT(file)}  // デモ用の簡易処理
+                          onClick={() => handleBuyNFT(file)}
                           disabled={buyLoading}
                           className="w-1/2"
                         >
