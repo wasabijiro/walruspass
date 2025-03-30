@@ -230,3 +230,25 @@ Tusky provides an end-to-end data encryption solution that leverages user and Va
 
 ![SEALの概要](./images/seal.png)
 
+Below is an explanation of how this project meets each of the evaluation criteria:
+
+---
+
+## Judging Criteria
+
+**Technicality:**  
+This project leverages cutting-edge decentralized technologies. It uses Sui Move to mint NFTs and manage on-chain ownership, enabling secure content access based on blockchain events. On the client side, the Tusky SDK handles key generation and encryption, ensuring that content remains protected at all times. By combining decentralized storage (Walrus) with advanced encryption mechanisms, the project showcases use cases that are only possible through this kind of architecture.
+
+**Originality:**  
+Using NFTs as access credentials is a highly original concept. By linking blockchain-based digital ownership with secure distribution of exclusive content, the project creates a new ecosystem that goes beyond traditional subscription models. It also provides a viable alternative to conventional private data delivery systems, which often rely on centralized storage—a structure this project seeks to replace.
+
+**Practicality:**  
+This solution addresses a real-world need: allowing creators to securely deliver premium content to targeted audiences. By ensuring that only NFT holders can decrypt the content, it guarantees authenticity and exclusive ownership. This mechanism can be applied to a wide range of practical use cases. The decentralized architecture also provides fault tolerance and censorship resistance, making the solution highly usable in real deployment scenarios.
+
+**Usability (UI/UX/DX):**  
+Thanks to the Tusky SDK, users don’t have to worry about managing encryption keys themselves. The system is designed to handle key management behind the scenes, creating a smooth and intuitive user experience for both creators and consumers.
+
+**WOW Factor:**  
+This project is a powerful blend of decentralized storage, blockchain, and modern encryption. It fundamentally reimagines how digital content can be distributed and monetized—offering a new paradigm that challenges the norms of centralized content platforms.
+
+---
