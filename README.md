@@ -106,6 +106,8 @@ Tusky provides an end-to-end data encryption solution that leverages user and Va
 
 ## Technologies Used
 
+![技術スタックの概要](./images/tech.png)
+
 
 - **Sui Move:**  
 
@@ -212,6 +214,8 @@ Tusky provides an end-to-end data encryption solution that leverages user and Va
 
 - **Expanding to New Use Cases:**  
 
+![ユースケースの概要](./images/usecase.png)
+
  - **Decentralized YouTube for Exclusive Content:** Storing exclusive content on decentralized storage.  
 
  - **Decentralized Supply Chain Management:** Real-time sharing of product movement records and quality inspection data.  
@@ -222,5 +226,7 @@ Tusky provides an end-to-end data encryption solution that leverages user and Va
 
 
 
- Additionally, Tusky plans to introduce the Seal encryption scheme soon, which will offer token-restricted access to private vaults and further strengthen exclusive access control for NFT holders.
+ Additionally, Mysten Labs plans to introduce the Seal encryption scheme soon, which will offer token-restricted access to private vaults and further strengthen exclusive access control for NFT holders.
+
+![SEALの概要](./images/seal.png)
 
